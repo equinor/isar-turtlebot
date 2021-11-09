@@ -2,9 +2,8 @@ import logging
 from abc import ABC
 from logging import Logger
 
-from roslibpy import Ros
-
 from isar_turtlebot.ros_bridge.topic import Topic
+from roslibpy import Ros
 
 
 class RosBridgeInterface(ABC):
