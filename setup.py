@@ -22,6 +22,7 @@ setup(
     ],
     include_package_data=True,
     setup_requires=["wheel"],
+    install_requires=["roslibpy"],
     python_requires=">=3.8",
     tests_require=["pytest"],
 )
