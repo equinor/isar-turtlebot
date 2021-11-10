@@ -131,10 +131,29 @@ class Robot(RobotInterface):
     ) -> Optional[InspectionResult]:
         return None
 
-    def robot_pose(self) -> Pose:
+    def get_robot_pose(self) -> Pose:
+
+        pose_message: dict = self.bridge.pose.get_value()
+        position_message: dict = pose_message["pose"]["pose"]["position"]
+        orientation_message: dict = pose_message["pose"]["pose"]["orientation"]
+
         pose: Pose = Pose(
-            position=Position(x=1, y=1, z=1, frame=Frame.Robot),
-            orientation=Orientation(x=0, y=0, z=0, w=1, frame=Frame.Robot),
+            position=Position(
+                x=position_message["x"],
+                y=position_message["y"],
+                z=position_message["z"],
+                frame=Frame.Robot,
+            ),
+            orientation=Orientation(
+                x=orientation_message["x"],
+                y=orientation_message["y"],
+                z=orientation_message["z"],
+                w=orientation_message["w"],
+                frame=Frame.Robot,
+            ),
             frame=Frame.Robot,
         )
         return pose
+
+    def robot_pose(self) -> Pose:
+        return self.get_robot_pose()

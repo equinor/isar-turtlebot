@@ -34,6 +34,12 @@ class RosBridge(RosBridgeInterface):
             message_type="actionlib_msgs/GoalStatusArray",
         )
 
+        self.pose: Topic = Topic(
+            client=self.client,
+            name="/amcl_pose",
+            message_type="geometry_msgs/PoseWithCovarianceStamped",
+        )
+
     def connect_client(
         self,
         host: str,
