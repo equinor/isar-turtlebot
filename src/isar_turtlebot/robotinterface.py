@@ -3,6 +3,7 @@ import time
 from logging import Logger
 from typing import Any, Optional, Sequence, Tuple
 
+
 from robot_interface.models.geometry.frame import Frame
 from robot_interface.models.geometry.joints import Joints
 from robot_interface.models.geometry.orientation import Orientation
@@ -12,7 +13,13 @@ from robot_interface.models.inspection.inspection import (
     Inspection,
     InspectionResult,
 )
-from robot_interface.models.mission import DriveToPose, MissionStatus, Step
+from robot_interface.models.mission import (
+    DriveToPose,
+    TakeImage,
+    TakeThermalImage,
+    MissionStatus,
+    Step,
+)
 from robot_interface.robot_interface import RobotInterface
 
 from isar_turtlebot.models.turtlebot_status import TurtlebotStatus
@@ -27,36 +34,45 @@ class Robot(RobotInterface):
 
     def schedule_step(self, step: Step) -> Tuple[bool, Optional[Any], Optional[Joints]]:
 
-        if isinstance(step, DriveToPose):
-            previous_run_id: str = self.get_run_id()
-            pose_message: dict = {
-                "goal": {
-                    "target_pose": {
-                        "header": {
-                            "seq": 0,
-                            "stamp": {"secs": 1533, "nsecs": 746000000},
-                            "frame_id": "map",
-                        },
-                        "pose": {
-                            "position": {
-                                "x": step.pose.position.x,
-                                "y": step.pose.position.y,
-                                "z": step.pose.position.z,
-                            },
-                            "orientation": {
-                                "x": step.pose.orientation.x,
-                                "y": step.pose.orientation.y,
-                                "z": step.pose.orientation.z,
-                                "w": step.pose.orientation.w,
-                            },
-                        },
-                    }
-                },
-            }
+        previous_run_id: str = self.get_run_id()
+        self.publish_task(step=step)
+        run_id: str = self.wait_for_updated_task(previous_run_id=previous_run_id)
+        return True, run_id, None
 
-            self.bridge.execute_task.publish(message=pose_message)
-            run_id: str = self.wait_for_updated_task(previous_run_id=previous_run_id)
-            return True, run_id, None
+    def publish_task(self, step: Step) -> None:
+        if isinstance(step, DriveToPose):
+            self.publish_navigation_task(pose=step.pose)
+
+        elif isinstance(step, (TakeImage, TakeThermalImage)):
+            raise TypeError(f"Image step is not  yet implemented on turtlebot")
+
+    def publish_navigation_task(self, pose: Pose) -> None:
+        pose_message: dict = {
+            "goal": {
+                "target_pose": {
+                    "header": {
+                        "seq": 0,
+                        "stamp": {"secs": 1533, "nsecs": 746000000},
+                        "frame_id": "map",
+                    },
+                    "pose": {
+                        "position": {
+                            "x": pose.position.x,
+                            "y": pose.position.y,
+                            "z": pose.position.z,
+                        },
+                        "orientation": {
+                            "x": pose.orientation.x,
+                            "y": pose.orientation.y,
+                            "z": pose.orientation.z,
+                            "w": pose.orientation.w,
+                        },
+                    },
+                }
+            },
+        }
+
+        self.bridge.execute_task.publish(message=pose_message)
 
     def get_run_id(self) -> str:
         status_msg: dict = self.bridge.mission_status.get_value()
