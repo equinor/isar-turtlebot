@@ -2,7 +2,7 @@ import logging
 from abc import ABC
 from logging import Logger
 
-from isar_turtlebot.ros_bridge.topic import Topic
+from isar_turtlebot.ros_bridge.topic import ImageTopic, Topic
 from roslibpy import Ros
 
 
@@ -33,6 +33,12 @@ class RosBridge(RosBridgeInterface):
             client=self.client,
             name="/amcl_pose",
             message_type="geometry_msgs/PoseWithCovarianceStamped",
+        )
+
+        self.visual_inspection: ImageTopic = ImageTopic(
+            client=self.client,
+            name="/camera/rgb/image_raw/compressed",
+            message_type="sensor_msgs/CompressedImage",
         )
 
     def connect_client(
