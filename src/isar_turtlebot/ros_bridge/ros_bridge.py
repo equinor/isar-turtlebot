@@ -12,11 +12,7 @@ class RosBridgeInterface(ABC):
 
 
 class RosBridge(RosBridgeInterface):
-    def __init__(
-        self,
-        host: str = "localhost",
-        port: int = 9091,
-    ):
+    def __init__(self, host: str = "localhost", port: int = 9090):
         self.logger: Logger = logging.getLogger("state_machine")
 
         self.client: Ros = self.connect_client(host=host, port=port)
