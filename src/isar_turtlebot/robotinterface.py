@@ -2,6 +2,7 @@ import logging
 import time
 from logging import Logger
 from typing import Any, Optional, Sequence, Tuple
+from isar_turtlebot.inspection_pose import get_inspection_pose
 
 from robot_interface.models.geometry.frame import Frame
 from robot_interface.models.geometry.joints import Joints
@@ -39,7 +40,10 @@ class Robot(RobotInterface):
             self._publish_navigation_task(pose=step.pose)
 
         elif isinstance(step, (TakeImage, TakeThermalImage)):
-            pose: Pose = self.get_robot_pose()
+            # pose: Pose = self.get_robot_pose()
+            pose: Pose = get_inspection_pose(
+                current_pose=self.robot_pose(), target=step.target
+            )
             self.publish_navigation_task(pose=pose)
             self.bridge.visual_inspection.take_image()
 
