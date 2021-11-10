@@ -3,22 +3,18 @@ import time
 from logging import Logger
 from typing import Any, Optional, Sequence, Tuple
 
-
 from robot_interface.models.geometry.frame import Frame
 from robot_interface.models.geometry.joints import Joints
 from robot_interface.models.geometry.orientation import Orientation
 from robot_interface.models.geometry.pose import Pose
 from robot_interface.models.geometry.position import Position
-from robot_interface.models.inspection.inspection import (
-    Inspection,
-    InspectionResult,
-)
+from robot_interface.models.inspection.inspection import Inspection, InspectionResult
 from robot_interface.models.mission import (
     DriveToPose,
-    TakeImage,
-    TakeThermalImage,
     MissionStatus,
     Step,
+    TakeImage,
+    TakeThermalImage,
 )
 from robot_interface.robot_interface import RobotInterface
 
@@ -43,7 +39,9 @@ class Robot(RobotInterface):
             self._publish_navigation_task(pose=step.pose)
 
         elif isinstance(step, (TakeImage, TakeThermalImage)):
-            raise TypeError(f"Image step is not  yet implemented on turtlebot")
+            pose: Pose = self.get_robot_pose()
+            self.publish_navigation_task(pose=pose)
+            self.bridge.visual_inspection.take_image()
 
     def _publish_navigation_task(self, pose: Pose) -> None:
         pose_message: dict = {
