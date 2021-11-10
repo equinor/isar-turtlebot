@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Optional
 from uuid import uuid4
 
+from isar_turtlebot.config import config
 from roslibpy import Message, Ros
 from roslibpy import Topic as RosTopic
 
@@ -81,7 +82,7 @@ class ImageTopic(TopicInterface):
         name: str,
         message_type: str,
         throttle_rate: int = 1000,
-        storage_folder: Path = Path("results"),
+        storage_folder: Path = Path(config.get("storage", "storage_folder")),
         queue_size: int = 100,
         queue_length: int = 0,
         log_callbacks: bool = False,
@@ -115,7 +116,7 @@ class ImageTopic(TopicInterface):
 
     def on_image(self, message: dict) -> None:
         image_data = message["data"].encode("ascii")
-        image_bytes = base64.decode(image_data)
+        image_bytes = base64.b64decode(image_data)
 
         self.value = image_bytes
 
