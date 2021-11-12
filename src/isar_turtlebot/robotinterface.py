@@ -4,6 +4,11 @@ from datetime import datetime
 from logging import Logger
 from typing import Any, Optional, Sequence, Tuple
 
+from isar_turtlebot.utilities.inspection_pose import (
+    get_inspection_pose,
+    within_heading_tolerance,
+)
+
 from robot_interface.models.geometry.frame import Frame
 from robot_interface.models.geometry.joints import Joints
 from robot_interface.models.geometry.orientation import Orientation
@@ -53,6 +58,10 @@ class Robot(RobotInterface):
                 current_pose=self.robot_pose(), target=step.target
             )
             self._publish_navigation_task(pose=pose)
+
+            while not within_heading_tolerance(robot_pose=self.robot_pose(), pose=pose):
+                time.sleep(0.1)
+
             self.bridge.visual_inspection.take_image()
 
     def _publish_navigation_task(self, pose: Pose) -> None:
