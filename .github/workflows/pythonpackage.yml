@@ -28,10 +28,8 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install -r requirements-dev.txt
         pip install git+https://github.com/equinor/isar.git@main
-        pip install .
+        pip install ".[dev]"
 
     - name: Lint
       run: |

@@ -91,8 +91,7 @@ For local development, please fork the repository. Then, clone and install in th
 ```bash
 $ git clone https://github.com/equinor/isar-turtlebot
 $ cd isar-turtlebot
-$ pip install -r requirements.txt -r requirements-dev.txt
-$ pip install -e .
+$ pip install -e ".[dev]"
 ```
 
 ## Contributing
