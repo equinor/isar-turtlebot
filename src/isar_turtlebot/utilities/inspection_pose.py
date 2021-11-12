@@ -9,9 +9,7 @@ from scipy.spatial.transform import Rotation
 
 def get_inspection_pose(current_pose, target):
 
-    target = np.array([1, 2])
-    position = np.array([1, 3])
-    direction = target - position
+    direction = np.array(target.to_list()) - np.array(current_pose.position.to_list())
 
     alpha = np.arctan2(direction[0], direction[1])
 

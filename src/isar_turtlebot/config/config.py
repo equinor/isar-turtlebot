@@ -11,7 +11,7 @@ class Config(object):
         load_dotenv()
         env = getenv("ENVIRONMENT")
         if not env:
-            raise ConfigurationError(f"Environment not set")
+            raise ConfigurationError("Environment not set")
         self.parser = ConfigParser()
 
         with pkg_resources.path("isar_turtlebot.config", "default.ini") as filepath:

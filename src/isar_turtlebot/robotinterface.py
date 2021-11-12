@@ -1,15 +1,22 @@
 import logging
 import time
+from datetime import datetime
 from logging import Logger
 from typing import Any, Optional, Sequence, Tuple
-from isar_turtlebot.inspection_pose import get_inspection_pose
 
 from robot_interface.models.geometry.frame import Frame
 from robot_interface.models.geometry.joints import Joints
 from robot_interface.models.geometry.orientation import Orientation
 from robot_interface.models.geometry.pose import Pose
 from robot_interface.models.geometry.position import Position
-from robot_interface.models.inspection.inspection import Inspection, InspectionResult
+from robot_interface.models.inspection.formats.image import Image
+from robot_interface.models.inspection.inspection import (
+    Inspection,
+    InspectionResult,
+    TimeIndexedPose,
+)
+from robot_interface.models.inspection.metadata import ImageMetadata
+from robot_interface.models.inspection.references import ImageReference
 from robot_interface.models.mission import (
     DriveToPose,
     MissionStatus,
@@ -19,8 +26,10 @@ from robot_interface.models.mission import (
 )
 from robot_interface.robot_interface import RobotInterface
 
+from isar_turtlebot.config import config
 from isar_turtlebot.models.turtlebot_status import TurtlebotStatus
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
+from isar_turtlebot.utilities.inspection_pose import get_inspection_pose
 
 
 class Robot(RobotInterface):
@@ -39,12 +48,11 @@ class Robot(RobotInterface):
         if isinstance(step, DriveToPose):
             self._publish_navigation_task(pose=step.pose)
 
-        elif isinstance(step, (TakeImage, TakeThermalImage)):
-            # pose: Pose = self.get_robot_pose()
+        elif isinstance(step, TakeImage):
             pose: Pose = get_inspection_pose(
                 current_pose=self.robot_pose(), target=step.target
             )
-            self.publish_navigation_task(pose=pose)
+            self._publish_navigation_task(pose=pose)
             self.bridge.visual_inspection.take_image()
 
     def _publish_navigation_task(self, pose: Pose) -> None:
@@ -125,12 +133,39 @@ class Robot(RobotInterface):
     def get_inspection_references(
         self, vendor_mission_id: Any, current_step: Step
     ) -> Sequence[Inspection]:
-        return []
+        now: datetime = datetime.utcnow()
+
+        if isinstance(current_step, TakeImage):
+            self.bridge.visual_inspection.register_run_id(run_id=vendor_mission_id)
+            pose: Pose = self._get_robot_pose()
+            image_metadata: ImageMetadata = ImageMetadata(
+                start_time=now,
+                time_indexed_pose=TimeIndexedPose(pose=pose, time=now),
+                file_type=config.get("metadata", "image_filetype"),
+            )
+            image_ref: ImageReference = ImageReference(
+                id=vendor_mission_id, metadata=image_metadata
+            )
+
+        return [image_ref]
 
     def download_inspection_result(
         self, inspection: Inspection
     ) -> Optional[InspectionResult]:
-        return None
+        if isinstance(inspection, ImageReference):
+            try:
+                image_data = self.bridge.visual_inspection.read_image(
+                    run_id=inspection.id
+                )
+
+                inspection_result = Image(
+                    id=inspection.id, metadata=inspection.metadata, data=image_data
+                )
+            except (KeyError, TypeError, FileNotFoundError) as e:
+                self.logger("Failed to retreive inspection result", e)
+                inspection_result = None
+
+        return inspection_result
 
     def _get_robot_pose(self) -> Pose:
 
