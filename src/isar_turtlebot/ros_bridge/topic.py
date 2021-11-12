@@ -23,7 +23,11 @@ class TopicInterface(ABC):
 
 class ImageTopicInterface(ABC):
     @abstractmethod
-    def save_mission_id_to_image(self, vendor_mission_id: int) -> None:
+    def take_image(self) -> None:
+        pass
+
+    @abstractmethod
+    def register_run_id(self, run_id: str) -> None:
         pass
 
     @abstractmethod
@@ -75,7 +79,7 @@ class Topic(TopicInterface):
         self.topic.subscribe(self.on_message)
 
 
-class ImageTopic(TopicInterface):
+class ImageTopic(ImageTopicInterface):
     def __init__(
         self,
         client: Ros,
@@ -101,24 +105,20 @@ class ImageTopic(TopicInterface):
         if self.log_callbacks:
             self.logger: Logger = logging.getLogger("turtlebot_bridge")
 
-        self.value: Optional[Any] = None
         self.storage_folder: Path = storage_folder
+        self.filenames: dict = dict()
+        self.current_filename: Optional[Path] = None
 
-        self.should_capture_image = False
+        self.should_capture_image: bool = False
 
         self.subscribe()
 
     def publish(self, message: Any) -> None:
         self.topic.publish(Message(message))
 
-    def get_value(self) -> Optional[Any]:
-        return self.value
-
     def on_image(self, message: dict) -> None:
         image_data = message["data"].encode("ascii")
         image_bytes = base64.b64decode(image_data)
-
-        self.value = image_bytes
 
         if self.should_capture_image:
             if self.log_callbacks:
@@ -132,10 +132,23 @@ class ImageTopic(TopicInterface):
             with open(filename, "wb") as image_file:
                 image_file.write(image_bytes)
 
+            self.current_filename = filename
+
             self.should_capture_image = False
 
-    def take_image(self):
+    def take_image(self) -> None:
         self.should_capture_image = True
+
+    def register_run_id(self, run_id: str) -> None:
+        if not self.should_capture_image:
+            self.filenames[run_id] = self.current_filename
+
+    def read_image(self, run_id: str) -> bytes:
+        filename: Path = self.filenames[run_id]
+        with open(filename, "rb") as image_file:
+            image_data = image_file.read()
+
+        return image_data
 
     def subscribe(self) -> None:
         self.topic.subscribe(self.on_image)
