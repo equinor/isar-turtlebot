@@ -31,12 +31,6 @@ https://gazebosim.org/tutorials?tut=ros_installing&cat=connect_ros) for gazebo:
 $ sudo apt-get install ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-ros-control
 ```
 
-And rosbridge:
-```bash
-$ sudo apt-get install ros-noetic-rosbridge-suite
-```
-
-
 ### Running the simulation
 
 First, you will need to set the following environment variables:
@@ -59,10 +53,9 @@ The gazebo together with the navigation stack and rosbridge is then launched by:
 $ roslaunch launch/simulation.launch
 ```
 
-
 The robot  can be located with `2DPose Estimate` and naviagted with `2D Navigation Goal` in rviz. 
 
-### Running simulations with ISAR
+### Simulations with ISAR
 
 Download and install [ISAR](github.com/equinor/isar) on your computer. Follow the [robot integration guide](https://github.com/equinor/isar#robot-integration) installing `isar-turtlebot`. Remember to set the robot directory environment variable:
 
@@ -70,13 +63,25 @@ Download and install [ISAR](github.com/equinor/isar) on your computer. Follow th
 $ export ROBOT_PACKAGE=isar_turtlebot
 ```
 
-Make sure that the [simulation](#running-the-simulation) is running, and run ISAR:
+For the ISAR API to communicate with the simulator, you will need rosbridge:
+
+```bash
+$ sudo apt-get install ros-noetic-rosbridge-suite
+```
+
+You can now [run the simulation](#running-the-simulation) and launch rosbridge:
+
+```bash
+$ roslaunch rosbridge_server rosbridge_websocket.launch
+```
+
+To run ISAR:
 
 ```bash
 $ python main.py
 ```
 
-Missions can now be posted to the robot through [ISAR](https://github.com/equinor/isar#running-a-robot-mission).
+Missions can be posted to the robot through [ISAR](https://github.com/equinor/isar#running-a-robot-mission).
 
 If the example map are used, you can try the example mission number `5`.
 
