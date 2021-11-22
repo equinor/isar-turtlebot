@@ -7,7 +7,7 @@ setup(
     long_description_content_type="text/markdown",
     version="0.0.1",
     author="Equinor ASA",
-    author_email="fg_robots@equinor.com",
+    author_email="fg_robots_dev@equinor.com",
     url="https://github.com/equinor/isar-turtlebot",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
