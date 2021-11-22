@@ -24,6 +24,6 @@ setup(
     setup_requires=["wheel"],
     install_requires=["roslibpy"],
     extras_require={"dev": ["pytest", "black"]},
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     tests_require=["pytest"],
 )
