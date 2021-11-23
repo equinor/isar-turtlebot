@@ -33,20 +33,19 @@ class Robot(RobotInterface):
         self.bridge: RosBridge = RosBridge()
 
     def schedule_step(self, step: Step) -> Tuple[bool, Optional[Any], Optional[Joints]]:
-
-        previous_run_id: str = self.get_run_id()
-        self.publish_task(step=step)
-        run_id: str = self.wait_for_updated_task(previous_run_id=previous_run_id)
+        self._publish_task(step=step)
+        previous_run_id: str = self._get_run_id()
+        run_id: str = self._wait_for_updated_task(previous_run_id=previous_run_id)
         return True, run_id, None
 
-    def publish_task(self, step: Step) -> None:
+    def _publish_task(self, step: Step) -> None:
         if isinstance(step, DriveToPose):
-            self.publish_navigation_task(pose=step.pose)
+            self._publish_navigation_task(pose=step.pose)
 
         elif isinstance(step, (TakeImage, TakeThermalImage)):
             raise TypeError(f"Image step is not  yet implemented on turtlebot")
 
-    def publish_navigation_task(self, pose: Pose) -> None:
+    def _publish_navigation_task(self, pose: Pose) -> None:
         pose_message: dict = {
             "goal": {
                 "target_pose": {
@@ -74,18 +73,18 @@ class Robot(RobotInterface):
 
         self.bridge.execute_task.publish(message=pose_message)
 
-    def get_run_id(self) -> str:
+    def _get_run_id(self) -> Optional[str]:
         status_msg: dict = self.bridge.mission_status.get_value()
         try:
             run_id: str = status_msg["status_list"][0]["goal_id"]["id"]
             return run_id
-        except KeyError as e:
-            self.logger.error(e)
-            raise
+        except (KeyError, IndexError):
+            self.logger.info("Failed to get current mission_id returning None")
+            return None
 
-    def wait_for_updated_task(self, previous_run_id: str, timeout: int = 20) -> str:
+    def _wait_for_updated_task(self, previous_run_id: str, timeout: int = 20) -> str:
         start_time: float = time.time()
-        current_run_id: str = self.get_run_id()
+        current_run_id: str = self._get_run_id()
 
         while current_run_id == previous_run_id:
             time.sleep(0.1)
@@ -94,7 +93,7 @@ class Robot(RobotInterface):
                 raise TimeoutError(
                     f"Scheduling of task for TurtleBot3 timed out. Run ID: {current_run_id}"
                 )
-            current_run_id = self.get_run_id()
+            current_run_id = self._get_run_id()
 
         return current_run_id
 
@@ -131,7 +130,7 @@ class Robot(RobotInterface):
     ) -> Optional[InspectionResult]:
         return None
 
-    def get_robot_pose(self) -> Pose:
+    def _get_robot_pose(self) -> Pose:
 
         pose_message: dict = self.bridge.pose.get_value()
         position_message: dict = pose_message["pose"]["pose"]["position"]
@@ -156,4 +155,4 @@ class Robot(RobotInterface):
         return pose
 
     def robot_pose(self) -> Pose:
-        return self.get_robot_pose()
+        return self._get_robot_pose()

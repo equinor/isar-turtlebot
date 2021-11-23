@@ -39,9 +39,10 @@ $ sudo apt-get install ros-noetic-rosbridge-suite
 
 ### Running the simulation
 
-First, you will need to set the following environment variable:
+First, you will need to set the following environment variables:
 
 ```bash
+$ export ISAR_TURTLEBOT_PATH=<path/to/isar-turtlebot>
 $ export TURTLEBOT3_MODEL=waffle
 ```
 
@@ -50,19 +51,14 @@ Build with catkin_make:
 $ cd ~/catkin_ws && catkin_make
 ```
 
-You will need a map (`map.pgm` and `map.yaml`). The map can be [generated](https://emanual.robotis.com/docs/en/platform/turtlebot3/slam_simulation), or the [example map](https://github.com/equinor/isar-turtlebot/tree/main/examples/house) can be used. If you use the example map, you must download the files to your computer and update the image path in `house_map.yaml` with the correct path. Then, gazebo and rviz can be launched:
+You will need a map (`map.pgm` and `map.yaml`). The map can be [generated](https://emanual.robotis.com/docs/en/platform/turtlebot3/slam_simulation), or the [example map](https://github.com/equinor/isar-turtlebot/tree/main/maps) can be used. 
+
+The gazebo together with the navigation stack and rosbridge is then launched by:
 
 ```bash
-$ roslaunch turtlebot3_gazebo turtlebot3_house.launch
+$ roslaunch launch/simulation.launch
 ```
 
-```bash
-$ roslaunch rosbridge_server rosbridge_websocket.launch
-```
-
-```bash
-$ roslaunch turtlebot3_navigation turtlebot3_navigation.launch map_file:=<path/to/map.yaml>
-```
 
 The robot  can be located with `2DPose Estimate` and naviagted with `2D Navigation Goal` in rviz. 
 
