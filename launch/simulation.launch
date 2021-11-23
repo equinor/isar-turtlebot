@@ -1,0 +1,12 @@
+<launch>
+
+  <!-- Gazebo -->
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_house.launch"/>
+
+  <!-- Rosbridge -->
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+
+  <!-- Navigation -->
+  <include file="$(env ISAR_TURTLEBOT_PATH)/launch/navigation.launch"/>
+
+</launch>
