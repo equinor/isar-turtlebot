@@ -67,7 +67,7 @@ The robot  can be located with `2DPose Estimate` and naviagted with `2D Navigati
 Download and install [ISAR](github.com/equinor/isar) on your computer. Follow the [robot integration guide](https://github.com/equinor/isar#robot-integration) installing `isar-turtlebot`. Remember to set the robot directory environment variable:
 
 ```bash
-$ export ROBOT_DIRECTORY=isar_turtlebot
+$ export ROBOT_PACKAGE=isar_turtlebot
 ```
 
 Make sure that the [simulation](#running-the-simulation) is running, and run ISAR:
