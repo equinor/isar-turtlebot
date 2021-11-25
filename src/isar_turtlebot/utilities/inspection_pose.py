@@ -8,7 +8,7 @@ from robot_interface.models.geometry.pose import Pose
 from robot_interface.models.geometry.position import Position
 
 
-def get_inspection_pose(current_pose: Pose, target: Position):
+def get_inspection_pose(current_pose: Pose, target: Position) -> Pose:
 
     direction = np.array(target.to_list()) - np.array(current_pose.position.to_list())
     alpha = np.arctan2(direction[0], direction[1])

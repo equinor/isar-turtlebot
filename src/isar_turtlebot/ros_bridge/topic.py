@@ -124,20 +124,19 @@ class ImageTopic(ImageTopicInterface):
             if self.log_callbacks:
                 self.logger.debug(f"Updated value for topic {self.name}")
 
-            filename: Path = Path(
-                f"{self.storage_folder.as_posix()}/{str(uuid4())}.jpeg"
-            )
-            filename.parent.mkdir(exist_ok=True)
-
-            with open(filename, "wb") as image_file:
+            with open(self.current_filename, "wb") as image_file:
                 image_file.write(image_bytes)
-
-            self.current_filename = filename
-
             self.should_capture_image = False
+
+    def stored_image(self) -> bool:
+        return self.current_filename.is_file()
 
     def take_image(self) -> None:
         self.should_capture_image = True
+
+        filename: Path = Path(f"{self.storage_folder.as_posix()}/{str(uuid4())}.jpeg")
+        filename.parent.mkdir(exist_ok=True)
+        self.current_filename = filename
 
     def register_run_id(self, run_id: str) -> None:
         if not self.should_capture_image:
