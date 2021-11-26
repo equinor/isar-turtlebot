@@ -40,7 +40,7 @@ class RosBridge(RosBridgeInterface):
             message_type="geometry_msgs/PoseWithCovarianceStamped",
         )
 
-        self.visual_inspection: ImageTopic = ImageTopic(
+        self.compressed_image: ImageTopic = ImageTopic(
             client=self.client,
             name="/camera/rgb/image_raw/compressed",
             message_type="sensor_msgs/CompressedImage",

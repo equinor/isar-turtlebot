@@ -1,12 +1,12 @@
 import logging
 import time
-import PIL.Image as PILImage
-import numpy as np
-from io import BytesIO
 from datetime import datetime
+from io import BytesIO
 from logging import Logger
 from typing import Any, Optional, Sequence, Tuple
 
+import numpy as np
+import PIL.Image as PILImage
 from robot_interface.models.geometry.frame import Frame
 from robot_interface.models.geometry.joints import Joints
 from robot_interface.models.geometry.orientation import Orientation
@@ -19,12 +19,12 @@ from robot_interface.models.inspection.inspection import (
     TimeIndexedPose,
 )
 from robot_interface.models.inspection.metadata import ImageMetadata
+from robot_interface.models.inspection.references import ImageReference
 from robot_interface.models.inspection.references.image_reference import (
     ImageReference,
     ThermalImageReference,
 )
 from robot_interface.models.mission import (
-    DriveToPose,
     MissionStatus,
     Step,
     TakeImage,
@@ -35,7 +35,7 @@ from robot_interface.robot_interface import RobotInterface
 from isar_turtlebot.config import config
 from isar_turtlebot.models.turtlebot_status import TurtlebotStatus
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
-from isar_turtlebot.utilities.inspection_pose import get_inspection_pose
+from isar_turtlebot.task_manager.task_manager import TaskManager
 
 
 class Robot(RobotInterface):
@@ -44,14 +44,10 @@ class Robot(RobotInterface):
 
         self.bridge: RosBridge = RosBridge()
 
-        self.inspection_task_timeout: float = config.getfloat(
-            "mission", "inspection_task_timeout"
-        )
-        self.current_task: Optional[str] = None
-        self.inspection_status: Optional[TurtlebotStatus] = None
+        self.task_manager: TaskManager = TaskManager(self.bridge)
 
     def schedule_step(self, step: Step) -> Tuple[bool, Optional[Any], Optional[Joints]]:
-        run_id: str = self._publish_task(step=step)
+        run_id: str = self.task_manager.publish_task(step=step)
         return True, run_id, None
 
     def mission_scheduled(self) -> bool:
@@ -59,7 +55,7 @@ class Robot(RobotInterface):
 
     def mission_status(self, mission_id: Any) -> MissionStatus:
         mission_status: MissionStatus = TurtlebotStatus.get_mission_status(
-            status=self._task_status()
+            status=self.task_manager.task_status()
         )
         return mission_status
 
@@ -79,8 +75,10 @@ class Robot(RobotInterface):
         now: datetime = datetime.utcnow()
 
         if isinstance(current_step, TakeImage):
-            self.bridge.visual_inspection.register_run_id(run_id=vendor_mission_id)
-            pose: Pose = self._get_robot_pose()
+            self.task_manager.filenames[
+                vendor_mission_id
+            ] = self.task_manager.current_filename
+            pose: Pose = self.robot_pose()
             image_metadata: ImageMetadata = ImageMetadata(
                 start_time=now,
                 time_indexed_pose=TimeIndexedPose(pose=pose, time=now),
@@ -90,7 +88,9 @@ class Robot(RobotInterface):
                 id=vendor_mission_id, metadata=image_metadata
             )
         elif isinstance(current_step, TakeThermalImage):
-            self.bridge.visual_inspection.register_run_id(run_id=vendor_mission_id)
+            self.task_manager.filenames[
+                vendor_mission_id
+            ] = self.task_manager.current_filename
             pose: Pose = self._get_robot_pose()
             image_metadata: ImageMetadata = ImageMetadata(
                 start_time=now,
@@ -108,9 +108,7 @@ class Robot(RobotInterface):
     ) -> Optional[InspectionResult]:
         if isinstance(inspection, ImageReference):
             try:
-                image_data = self.bridge.visual_inspection.read_image(
-                    run_id=inspection.id
-                )
+                image_data = self.read_image(run_id=inspection.id)
 
                 inspection_result = Image(
                     id=inspection.id, metadata=inspection.metadata, data=image_data
@@ -120,9 +118,7 @@ class Robot(RobotInterface):
                 inspection_result = None
         elif isinstance(inspection, ThermalImageReference):
             try:
-                image_data = self.bridge.visual_inspection.read_image(
-                    run_id=inspection.id
-                )
+                image_data = self.read_image(run_id=inspection.id)
                 image = PILImage.open(BytesIO(image_data))
                 image_array = np.asarray(image)
                 image_red = image_array[:, :, 0]
@@ -135,7 +131,7 @@ class Robot(RobotInterface):
                     data=image_array_io.getvalue(),
                 )
             except Exception as e:
-                self.logger("Failed to retreive inspection result", e)
+                self.logger.error("Failed to retreive inspection result", e)
                 inspection_result = None
         return inspection_result
 
@@ -166,123 +162,12 @@ class Robot(RobotInterface):
         )
         return pose
 
-    def _task_status(self) -> TurtlebotStatus:
-        if self.current_task == "inspection":
-            return self.inspection_status
-        return self._navigation_status()
+    def robot_pose(self) -> Pose:
+        return self.task_manager.get_robot_pose()
 
-    def _navigation_status(self) -> TurtlebotStatus:
-        message: dict = self.bridge.mission_status.get_value()
-        turtle_status: TurtlebotStatus = TurtlebotStatus.map_to_turtlebot_status(
-            message["status_list"][0]["status"]
-        )
-        return turtle_status
+    def read_image(self, run_id: str) -> bytes:
+        filename: Path = self.task_manager.filenames[run_id]
+        with open(filename, "rb") as image_file:
+            image_data = image_file.read()
 
-    def _publish_task(self, step: Step) -> str:
-        if isinstance(step, DriveToPose):
-            self.current_task = "navigation"
-            previous_run_id: str = self._get_run_id()
-            self._publish_navigation_task(pose=step.pose)
-            run_id: str = self._wait_for_updated_task(previous_run_id=previous_run_id)
-
-            return run_id
-        elif isinstance(step, (TakeImage, TakeThermalImage)):
-            self.current_task = "inspection"
-            run_id: str = self._publish_inspection_task(target=step.target)
-            try:
-                self._do_inspection_task()
-            except TimeoutError as e:
-                self.logger.error(e)
-                self.current_task = None
-
-            return run_id
-
-        else:
-            raise NotImplementedError(
-                f"Scheduled step: {step} is not implemented on {self}"
-            )
-
-    def _do_inspection_task(self):
-        start_time: float = time.time()
-        while self._navigation_status() is not TurtlebotStatus.Succeeded:
-            time.sleep(0.1)
-            execution_time: float = time.time() - start_time
-            if execution_time > self.inspection_task_timeout:
-                self.inspection_status = TurtlebotStatus.Failure
-                raise TimeoutError(
-                    f"Drive to inspection pose task for TurtleBot3 timed out. Run ID: {self._get_run_id()}"
-                )
-
-        self.bridge.visual_inspection.take_image()
-        while not self.bridge.visual_inspection.stored_image():
-            time.sleep(0.1)
-            execution_time: float = time.time() - start_time
-            if execution_time > self.inspection_task_timeout:
-                self.inspection_status = TurtlebotStatus.Failure
-                raise TimeoutError(
-                    f"Storing image for TurtleBot3 timed out. Run ID: {self._get_run_id()}"
-                )
-        self.inspection_status = TurtlebotStatus.Succeeded
-        self.current_task = None
-
-    def _publish_inspection_task(self, target: Position) -> None:
-        self.inspection_status = TurtlebotStatus.Active
-        previous_run_id: str = self._get_run_id()
-        inspection_pose: Pose = get_inspection_pose(
-            current_pose=self.robot_pose(), target=target
-        )
-        self._publish_navigation_task(pose=inspection_pose)
-        run_id: str = self._wait_for_updated_task(previous_run_id=previous_run_id)
-        return run_id
-
-    def _publish_navigation_task(self, pose: Pose) -> None:
-        pose_message: dict = {
-            "goal": {
-                "target_pose": {
-                    "header": {
-                        "seq": 0,
-                        "stamp": {"secs": 1533, "nsecs": 746000000},
-                        "frame_id": "map",
-                    },
-                    "pose": {
-                        "position": {
-                            "x": pose.position.x,
-                            "y": pose.position.y,
-                            "z": pose.position.z,
-                        },
-                        "orientation": {
-                            "x": pose.orientation.x,
-                            "y": pose.orientation.y,
-                            "z": pose.orientation.z,
-                            "w": pose.orientation.w,
-                        },
-                    },
-                }
-            },
-        }
-
-        self.bridge.execute_task.publish(message=pose_message)
-
-    def _get_run_id(self) -> Optional[str]:
-        status_msg: dict = self.bridge.mission_status.get_value()
-        try:
-            run_id: str = status_msg["status_list"][0]["goal_id"]["id"]
-            return run_id.replace("move_base-", "").split(".")[0].replace("-", "")
-        except (KeyError, IndexError):
-            self.logger.info("Failed to get current mission_id returning None")
-            return None
-
-    def _wait_for_updated_task(self, previous_run_id: str, timeout: int = 20) -> str:
-        start_time: float = time.time()
-        current_run_id: str = self._get_run_id()
-
-        while current_run_id == previous_run_id:
-            time.sleep(0.1)
-            execution_time: float = time.time() - start_time
-            if execution_time > timeout:
-                raise TimeoutError(
-                    f"Scheduling of task for TurtleBot3 timed out. Run ID: {current_run_id}"
-                )
-            current_run_id = self._get_run_id()
-
-        return current_run_id
+        return image_data
