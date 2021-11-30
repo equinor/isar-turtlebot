@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from logging import Logger
 from pathlib import Path
 from typing import Any, Optional
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from isar_turtlebot.config import config
 from roslibpy import Message, Ros
@@ -27,11 +27,11 @@ class ImageTopicInterface(ABC):
         pass
 
     @abstractmethod
-    def register_run_id(self, run_id: str) -> None:
+    def register_inspection_id(self, inspection_id: UUID) -> None:
         pass
 
     @abstractmethod
-    def read_image(self, vendor_mission_id: int) -> bytes:
+    def read_image(self, inspection_id: UUID) -> bytes:
         pass
 
 
@@ -138,12 +138,12 @@ class ImageTopic(ImageTopicInterface):
         filename.parent.mkdir(exist_ok=True)
         self.current_filename = filename
 
-    def register_run_id(self, run_id: str) -> None:
+    def register_inspection_id(self, inspection_id: UUID) -> None:
         if not self.should_capture_image:
-            self.filenames[run_id] = self.current_filename
+            self.filenames[inspection_id] = self.current_filename
 
-    def read_image(self, run_id: str) -> bytes:
-        filename: Path = self.filenames[run_id]
+    def read_image(self, inspection_id: UUID) -> bytes:
+        filename: Path = self.filenames[inspection_id]
         with open(filename, "rb") as image_file:
             image_data = image_file.read()
 
