@@ -1,12 +1,12 @@
 import logging
 import time
-import PIL.Image as PILImage
-import numpy as np
-from io import BytesIO
 from datetime import datetime
+from io import BytesIO
 from logging import Logger
 from typing import Any, Optional, Sequence, Tuple
 
+import numpy as np
+import PIL.Image as PILImage
 from robot_interface.models.geometry.frame import Frame
 from robot_interface.models.geometry.joints import Joints
 from robot_interface.models.geometry.orientation import Orientation
@@ -26,9 +26,9 @@ from robot_interface.models.inspection.references.image_reference import (
 from robot_interface.models.mission import (
     DriveToPose,
     MissionStatus,
-    Step,
     TakeImage,
     TakeThermalImage,
+    Task,
 )
 from robot_interface.robot_interface import RobotInterface
 
@@ -50,8 +50,8 @@ class Robot(RobotInterface):
         self.current_task: Optional[str] = None
         self.inspection_status: Optional[TurtlebotStatus] = None
 
-    def schedule_step(self, step: Step) -> Tuple[bool, Optional[Any], Optional[Joints]]:
-        run_id: str = self._publish_task(step=step)
+    def schedule_task(self, task: Task) -> Tuple[bool, Optional[Any], Optional[Joints]]:
+        run_id: str = self._publish_task(task=task)
         return True, run_id, None
 
     def mission_scheduled(self) -> bool:
@@ -67,18 +67,18 @@ class Robot(RobotInterface):
         return True
 
     def log_status(
-        self, mission_id: Any, mission_status: MissionStatus, current_step: Step
+        self, mission_id: Any, mission_status: MissionStatus, current_task: Task
     ):
         self.logger.info(f"Mission ID: {mission_id}")
         self.logger.info(f"Mission Status: {mission_status}")
-        self.logger.info(f"Current Step: {current_step}")
+        self.logger.info(f"Current Task: {current_task}")
 
     def get_inspection_references(
-        self, vendor_mission_id: Any, current_step: Step
+        self, vendor_mission_id: Any, current_task: Task
     ) -> Sequence[Inspection]:
         now: datetime = datetime.utcnow()
 
-        if isinstance(current_step, TakeImage):
+        if isinstance(current_task, TakeImage):
             self.bridge.visual_inspection.register_run_id(run_id=vendor_mission_id)
             pose: Pose = self._get_robot_pose()
             image_metadata: ImageMetadata = ImageMetadata(
@@ -89,7 +89,7 @@ class Robot(RobotInterface):
             image_ref: ImageReference = ImageReference(
                 id=vendor_mission_id, metadata=image_metadata
             )
-        elif isinstance(current_step, TakeThermalImage):
+        elif isinstance(current_task, TakeThermalImage):
             self.bridge.visual_inspection.register_run_id(run_id=vendor_mission_id)
             pose: Pose = self._get_robot_pose()
             image_metadata: ImageMetadata = ImageMetadata(
@@ -178,17 +178,17 @@ class Robot(RobotInterface):
         )
         return turtle_status
 
-    def _publish_task(self, step: Step) -> str:
-        if isinstance(step, DriveToPose):
+    def _publish_task(self, task: Task) -> str:
+        if isinstance(task, DriveToPose):
             self.current_task = "navigation"
             previous_run_id: str = self._get_run_id()
-            self._publish_navigation_task(pose=step.pose)
+            self._publish_navigation_task(pose=task.pose)
             run_id: str = self._wait_for_updated_task(previous_run_id=previous_run_id)
 
             return run_id
-        elif isinstance(step, (TakeImage, TakeThermalImage)):
+        elif isinstance(task, (TakeImage, TakeThermalImage)):
             self.current_task = "inspection"
-            run_id: str = self._publish_inspection_task(target=step.target)
+            run_id: str = self._publish_inspection_task(target=task.target)
             try:
                 self._do_inspection_task()
             except TimeoutError as e:
@@ -199,7 +199,7 @@ class Robot(RobotInterface):
 
         else:
             raise NotImplementedError(
-                f"Scheduled step: {step} is not implemented on {self}"
+                f"Scheduled task: {task} is not implemented on {self}"
             )
 
     def _do_inspection_task(self):
