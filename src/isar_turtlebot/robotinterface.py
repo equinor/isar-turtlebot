@@ -26,10 +26,10 @@ from robot_interface.models.inspection.references.image_reference import (
 )
 from robot_interface.models.mission import (
     DriveToPose,
-    MissionStatus,
     TakeImage,
     TakeThermalImage,
     Task,
+    TaskStatus,
 )
 from robot_interface.robot_interface import RobotInterface
 
@@ -60,17 +60,17 @@ class Robot(RobotInterface):
     def mission_scheduled(self) -> bool:
         return False
 
-    def mission_status(self, mission_id: UUID) -> MissionStatus:
-        mission_status: MissionStatus = TurtlebotStatus.get_mission_status(
+    def task_status(self, task_id: UUID) -> TaskStatus:
+        task_status: TaskStatus = TurtlebotStatus.get_task_status(
             status=self._task_status()
         )
-        return mission_status
+        return task_status
 
     def abort_mission(self) -> bool:
         return True
 
-    def log_status(self, mission_status: MissionStatus, current_task: Task):
-        self.logger.info(f"Mission Status: {mission_status}")
+    def log_status(self, task_status: TaskStatus, current_task: Task):
+        self.logger.info(f"Task Status: {task_status}")
         self.logger.info(f"Current Task: {current_task}")
 
     def get_inspection_references(self, current_task: Task) -> Sequence[Inspection]:
@@ -170,7 +170,7 @@ class Robot(RobotInterface):
         return self._navigation_status()
 
     def _navigation_status(self) -> TurtlebotStatus:
-        message: dict = self.bridge.mission_status.get_value()
+        message: dict = self.bridge.task_status.get_value()
         turtle_status: TurtlebotStatus = TurtlebotStatus.map_to_turtlebot_status(
             message["status_list"][0]["status"]
         )
@@ -259,7 +259,7 @@ class Robot(RobotInterface):
                 raise TimeoutError(f"Storing image for TurtleBot3 timed out.")
 
     def _get_turtlebot_goal_id(self) -> Optional[str]:
-        status_msg: dict = self.bridge.mission_status.get_value()
+        status_msg: dict = self.bridge.task_status.get_value()
 
         try:
             return status_msg["status_list"][0]["goal_id"]["id"]
