@@ -1,6 +1,6 @@
 from enum import Enum
 
-from robot_interface.models.mission import MissionStatus
+from robot_interface.models.mission import TaskStatus
 
 
 class TurtlebotStatus(str, Enum):
@@ -10,12 +10,12 @@ class TurtlebotStatus(str, Enum):
     Unexpected: str = "unexpected"
 
     @classmethod
-    def get_mission_status(cls, status: "TurtlebotStatus") -> MissionStatus:
+    def get_task_status(cls, status: "TurtlebotStatus") -> TaskStatus:
         return {
-            TurtlebotStatus.Active: MissionStatus.InProgress,
-            TurtlebotStatus.Failure: MissionStatus.Failed,
-            TurtlebotStatus.Succeeded: MissionStatus.Completed,
-            TurtlebotStatus.Unexpected: MissionStatus.Unexpected,
+            TurtlebotStatus.Active: TaskStatus.InProgress,
+            TurtlebotStatus.Failure: TaskStatus.Failed,
+            TurtlebotStatus.Succeeded: TaskStatus.Completed,
+            TurtlebotStatus.Unexpected: TaskStatus.Unexpected,
         }[status]
 
     @classmethod

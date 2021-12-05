@@ -28,7 +28,7 @@ class RosBridge(RosBridgeInterface):
             throttle_rate=1000,
         )
 
-        self.mission_status: Topic = Topic(
+        self.task_status: Topic = Topic(
             client=self.client,
             name="/move_base/status",
             message_type="actionlib_msgs/GoalStatusArray",
