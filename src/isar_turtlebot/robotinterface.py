@@ -60,7 +60,7 @@ class Robot(RobotInterface):
     def mission_scheduled(self) -> bool:
         return False
 
-    def task_status(self, task_id: UUID) -> TaskStatus:
+    def task_status(self, task_id: Optional[UUID]) -> TaskStatus:
         task_status: TaskStatus = TurtlebotStatus.get_task_status(
             status=self._task_status()
         )
