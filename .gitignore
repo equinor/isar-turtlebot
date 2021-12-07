@@ -130,5 +130,7 @@ dmypy.json
 
 .idea
 
+.vscode
+
 # Temporary storage folder
 results/
