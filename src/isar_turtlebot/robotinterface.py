@@ -114,7 +114,7 @@ class Robot(RobotInterface):
                     id=inspection.id, metadata=inspection.metadata, data=image_data
                 )
             except (KeyError, TypeError, FileNotFoundError) as e:
-                self.logger("Failed to retreive inspection result", e)
+                self.logger.error("Failed to retreive inspection result", e)
                 inspection_result = None
         elif isinstance(inspection, ThermalImageReference):
             try:
@@ -133,7 +133,7 @@ class Robot(RobotInterface):
                     data=image_array_io.getvalue(),
                 )
             except Exception as e:
-                self.logger("Failed to retreive inspection result", e)
+                self.logger.error("Failed to retreive inspection result", e)
                 inspection_result = None
         return inspection_result
 
