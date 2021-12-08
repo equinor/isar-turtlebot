@@ -22,7 +22,7 @@ class TurtlebotStatus(str, Enum):
     def map_to_turtlebot_status(cls, status_code: int) -> "TurtlebotStatus":
         if status_code == 1:
             return TurtlebotStatus.Active
-        elif status_code == 2:
+        elif status_code == 2 or status_code == 4:
             return TurtlebotStatus.Failure
         elif status_code == 3:
             return TurtlebotStatus.Succeeded
