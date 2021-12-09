@@ -3,13 +3,12 @@ import time
 from datetime import datetime
 from io import BytesIO
 from logging import Logger
-from typing import Optional, Sequence, Tuple
+from typing import Optional, Sequence
 from uuid import UUID
 
 import numpy as np
 import PIL.Image as PILImage
 from robot_interface.models.geometry.frame import Frame
-from robot_interface.models.geometry.joints import Joints
 from robot_interface.models.geometry.orientation import Orientation
 from robot_interface.models.geometry.pose import Pose
 from robot_interface.models.geometry.position import Position
@@ -52,10 +51,10 @@ class Robot(RobotInterface):
         self.inspection_status: Optional[TurtlebotStatus] = None
         self.goal_id: str = ""
 
-    def schedule_task(self, task: Task) -> Tuple[bool, Optional[Joints]]:
+    def schedule_task(self, task: Task) -> bool:
         self.goal_id = self._get_turtlebot_goal_id()
         self._publish_task(task=task)
-        return True, None
+        return True
 
     def mission_scheduled(self) -> bool:
         return False
