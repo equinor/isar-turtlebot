@@ -1,0 +1,16 @@
+version: "2.3"
+services:
+  noetic:
+    image: turtle_sim:latest
+    container_name: turtle_sim
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    runtime: nvidia
+    tty: true
