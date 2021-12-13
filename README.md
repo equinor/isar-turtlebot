@@ -5,7 +5,50 @@ ISAR implementation for the Turtlebot3 Waffle Pi.
 
 Running the full ISAR system requires an installation of a robot which satisfies the required [interface](https://github.com/equinor/isar/blob/main/src/robot_interface/robot_interface.py). isar-turtlebot is an ISAR implementation of the Turtlebot3 Waffle Pi, which enables running the Turtlebot with ISAR through simulations or physically.
 
-## Simulation
+## Run the simulation using docker
+
+### Give Docker containers access to the Nvidia graphics card on the host machine
+
+#### Pre-requisites
+- git
+- docker
+- docker-compose
+
+NOTE: Docker must NOT be installed using Snap. The Snap version is not compatible with nvidia-docker2. Instead, follow the [official documentation](https://docs.docker.com/engine/install/ubuntu/) from Docker for installation. 
+
+- To check if your Docker version was installed using snap run the following command.
+	```sh
+	systemctl list-units --type=service | grep docker
+	```
+	If the result is `snap.docker.dockerd.service` then the installation has been done using snap and must be reinstalled.
+
+#### Installation nvidia docker
+1. Install the newest recommended drivers from Nvidia if not already as described by the following [documentation](https://linuxconfig.org/how-to-install-the-nvidia-drivers-on-ubuntu-20-04-focal-fossa-linux)
+2. Install nvidia-docker2 using the [official documentation](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+
+### Run simulation
+
+Build the container. This needs to be done once before one can give the container access to the screen.
+```bash
+$ docker-compose build
+```
+
+Give the docker container access to the screen, this needs to be done each time the computer is restarted.
+```bash
+$ xhost +local:`docker inspect --format='{{ .Config.Hostname }}' turtle_sim`
+```
+
+Start the simulation
+```bash
+$ docker-compose up
+```
+
+Build and start the simulation
+```bash
+$ docker-compose up --build
+```
+
+## Simulation without docker
 
 ### Simulator installation
 
