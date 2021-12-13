@@ -7,6 +7,6 @@
   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
 
   <!-- Navigation -->
-  <include file="$(env ISAR_TURTLEBOT_PATH)/launch/navigation.launch"/>
+  <include file="$(find isar_turtlebot)/launch/navigation.launch"/>
 
 </launch>
