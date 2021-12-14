@@ -126,7 +126,7 @@ $ python main.py
 
 Missions can be posted to the robot through [ISAR](https://github.com/equinor/isar#running-a-robot-mission).
 
-If the example map are used, you can try the example mission number `5`.
+If the example map are used, you can try the example mission number `2`.
 
 ## Development
 
