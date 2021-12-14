@@ -6,25 +6,23 @@ from logging import Logger
 from typing import Optional, Sequence
 from uuid import UUID
 
-import numpy as np
 import PIL.Image as PILImage
+import numpy as np
 from robot_interface.models.geometry.frame import Frame
 from robot_interface.models.geometry.orientation import Orientation
 from robot_interface.models.geometry.pose import Pose
 from robot_interface.models.geometry.position import Position
-from robot_interface.models.inspection.formats.image import Image, ThermalImage
 from robot_interface.models.inspection.inspection import (
+    Image,
+    ImageMetadata,
     Inspection,
-    InspectionResult,
+    ThermalImage,
+    ThermalImageMetadata,
     TimeIndexedPose,
-)
-from robot_interface.models.inspection.metadata import ImageMetadata
-from robot_interface.models.inspection.references.image_reference import (
-    ImageReference,
-    ThermalImageReference,
 )
 from robot_interface.models.mission import (
     DriveToPose,
+    InspectionTask,
     TakeImage,
     TakeThermalImage,
     Task,
@@ -72,50 +70,53 @@ class Robot(RobotInterface):
         self.logger.info(f"Task Status: {task_status}")
         self.logger.info(f"Current Task: {current_task}")
 
-    def get_inspection_references(self, current_task: Task) -> Sequence[Inspection]:
+    def get_inspection_references(
+        self, inspection_task: InspectionTask
+    ) -> Sequence[Inspection]:
         now: datetime = datetime.utcnow()
         pose: Pose = self._get_robot_pose()
 
-        if isinstance(current_task, TakeImage):
+        if isinstance(inspection_task, TakeImage):
             image_metadata: ImageMetadata = ImageMetadata(
                 start_time=now,
                 time_indexed_pose=TimeIndexedPose(pose=pose, time=now),
                 file_type=config.get("metadata", "image_filetype"),
             )
-            self.bridge.visual_inspection.register_inspection_id(
-                inspection_id=current_task.id
-            )
-            return [ImageReference(id=current_task.id, metadata=image_metadata)]
+            image: Image = Image(metadata=image_metadata)
 
-        if isinstance(current_task, TakeThermalImage):
-            image_metadata: ImageMetadata = ImageMetadata(
+            self.bridge.visual_inspection.register_inspection_id(inspection_id=image.id)
+            return [image]
+
+        if isinstance(inspection_task, TakeThermalImage):
+            image_metadata: ThermalImageMetadata = ThermalImageMetadata(
                 start_time=now,
                 time_indexed_pose=TimeIndexedPose(pose=pose, time=now),
                 file_type=config.get("metadata", "thermal_image_filetype"),
             )
+            thermal_image: ThermalImage = ThermalImage(metadata=image_metadata)
+
             self.bridge.visual_inspection.register_inspection_id(
-                inspection_id=current_task.id
+                inspection_id=thermal_image.id
             )
-            return [ThermalImageReference(id=current_task.id, metadata=image_metadata)]
 
-        raise TypeError(f"Current task {current_task} is not a valid inspection task")
+            return [thermal_image]
 
-    def download_inspection_result(
-        self, inspection: Inspection
-    ) -> Optional[InspectionResult]:
-        if isinstance(inspection, ImageReference):
+        raise TypeError(
+            f"Current task {inspection_task} is not a valid inspection task"
+        )
+
+    def download_inspection_result(self, inspection: Inspection) -> Inspection:
+        if isinstance(inspection, Image):
             try:
                 image_data = self.bridge.visual_inspection.read_image(
                     inspection_id=inspection.id
                 )
-
-                inspection_result = Image(
-                    id=inspection.id, metadata=inspection.metadata, data=image_data
-                )
+                inspection.data = image_data
             except (KeyError, TypeError, FileNotFoundError) as e:
-                self.logger.error("Failed to retreive inspection result", e)
-                inspection_result = None
-        elif isinstance(inspection, ThermalImageReference):
+                self.logger.error("Failed to retrieve inspection result", e)
+                raise FileNotFoundError("No inspection was found") from e
+
+        elif isinstance(inspection, ThermalImage):
             try:
                 image_data = self.bridge.visual_inspection.read_image(
                     inspection_id=inspection.id
@@ -126,15 +127,12 @@ class Robot(RobotInterface):
                 image_grey = PILImage.fromarray(image_red)
                 image_array_io = BytesIO()
                 image_grey.save(image_array_io, format=inspection.metadata.file_type)
-                inspection_result = ThermalImage(
-                    id=inspection.id,
-                    metadata=inspection.metadata,
-                    data=image_array_io.getvalue(),
-                )
+
+                inspection.data = image_array_io.getvalue()
             except Exception as e:
-                self.logger.error("Failed to retreive inspection result", e)
-                inspection_result = None
-        return inspection_result
+                self.logger.error("Failed to retrieve inspection result", e)
+                raise FileNotFoundError("Failed to retrieve inspection result") from e
+        return inspection
 
     def robot_pose(self) -> Pose:
         return self._get_robot_pose()
