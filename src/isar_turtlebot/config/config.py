@@ -9,9 +9,7 @@ from isar_turtlebot.config.configuration_error import ConfigurationError
 class Config(object):
     def __init__(self):
         load_dotenv()
-        env = getenv("ENVIRONMENT")
-        if not env:
-            raise ConfigurationError("Environment not set")
+
         self.parser = ConfigParser()
 
         with pkg_resources.path("isar_turtlebot.config", "default.ini") as filepath:
