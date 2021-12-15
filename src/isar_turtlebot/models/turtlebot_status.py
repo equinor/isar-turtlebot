@@ -3,28 +3,28 @@ from enum import Enum
 from robot_interface.models.mission import TaskStatus
 
 
-class TurtlebotStatus(str, Enum):
+class Status(str, Enum):
     Active: str = "active"
     Failure: str = "failure"
     Succeeded: str = "success"
     Unexpected: str = "unexpected"
 
     @classmethod
-    def get_task_status(cls, status: "TurtlebotStatus") -> TaskStatus:
+    def map_to_task_status(cls, status: "Status") -> TaskStatus:
         return {
-            TurtlebotStatus.Active: TaskStatus.InProgress,
-            TurtlebotStatus.Failure: TaskStatus.Failed,
-            TurtlebotStatus.Succeeded: TaskStatus.Completed,
-            TurtlebotStatus.Unexpected: TaskStatus.Unexpected,
+            Status.Active: TaskStatus.InProgress,
+            Status.Failure: TaskStatus.Failed,
+            Status.Succeeded: TaskStatus.Completed,
+            Status.Unexpected: TaskStatus.Unexpected,
         }[status]
 
     @classmethod
-    def map_to_turtlebot_status(cls, status_code: int) -> "TurtlebotStatus":
+    def map_to_turtlebot_status(cls, status_code: int) -> "Status":
         if status_code == 1:
-            return TurtlebotStatus.Active
+            return Status.Active
         elif status_code == 2 or status_code == 4:
-            return TurtlebotStatus.Failure
+            return Status.Failure
         elif status_code == 3:
-            return TurtlebotStatus.Succeeded
+            return Status.Succeeded
         else:
-            return TurtlebotStatus.Unexpected
+            return Status.Unexpected
