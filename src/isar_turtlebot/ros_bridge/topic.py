@@ -1,5 +1,6 @@
 import base64
 import logging
+import time
 from abc import ABC, abstractmethod
 from logging import Logger
 from pathlib import Path
@@ -23,15 +24,7 @@ class TopicInterface(ABC):
 
 class ImageTopicInterface(ABC):
     @abstractmethod
-    def take_image(self) -> None:
-        pass
-
-    @abstractmethod
-    def register_inspection_id(self, inspection_id: UUID) -> None:
-        pass
-
-    @abstractmethod
-    def read_image(self, inspection_id: UUID) -> bytes:
+    def get_image(self, inspection_id: UUID) -> bytes:
         pass
 
 
@@ -85,11 +78,11 @@ class ImageTopic(ImageTopicInterface):
         client: Ros,
         name: str,
         message_type: str,
-        throttle_rate: int = 1000,
-        storage_folder: Path = Path(config.get("storage", "storage_folder")),
+        throttle_rate: int = 0,
         queue_size: int = 100,
         queue_length: int = 0,
         log_callbacks: bool = False,
+        get_image_timeout: float = config.getfloat("mission", "get_image_timeout"),
     ) -> None:
         self.name: str = name
         self.topic: RosTopic = RosTopic(
@@ -100,54 +93,38 @@ class ImageTopic(ImageTopicInterface):
             queue_size=queue_size,
             queue_length=queue_length,
         )
-
         self.log_callbacks: bool = log_callbacks
         if self.log_callbacks:
             self.logger: Logger = logging.getLogger("turtlebot_bridge")
 
-        self.storage_folder: Path = storage_folder
-        self.filenames: dict = dict()
-        self.current_filename: Optional[Path] = None
-
-        self.should_capture_image: bool = False
+        self.image: Optional[str] = None
+        self.take_image: bool = False
+        self.get_image_timeout: float = get_image_timeout
 
         self.subscribe()
 
     def publish(self, message: Any) -> None:
         self.topic.publish(Message(message))
 
-    def on_image(self, message: dict) -> None:
-        image_data = message["data"].encode("ascii")
-        image_bytes = base64.b64decode(image_data)
-
-        if self.should_capture_image:
-            if self.log_callbacks:
-                self.logger.debug(f"Updated value for topic {self.name}")
-
-            with open(self.current_filename, "wb") as image_file:
-                image_file.write(image_bytes)
-            self.should_capture_image = False
-
-    def stored_image(self) -> bool:
-        return self.current_filename.is_file()
-
-    def take_image(self) -> None:
-        self.should_capture_image = True
-
-        filename: Path = Path(f"{self.storage_folder.as_posix()}/{str(uuid4())}.jpeg")
-        filename.parent.mkdir(exist_ok=True)
-        self.current_filename = filename
-
-    def register_inspection_id(self, inspection_id: UUID) -> None:
-        if not self.should_capture_image:
-            self.filenames[inspection_id] = self.current_filename
-
-    def read_image(self, inspection_id: UUID) -> bytes:
-        filename: Path = self.filenames[inspection_id]
-        with open(filename, "rb") as image_file:
-            image_data = image_file.read()
-
-        return image_data
-
     def subscribe(self) -> None:
         self.topic.subscribe(self.on_image)
+
+    def on_image(self, message: dict) -> None:
+        if self.take_image:
+            self.image = message["data"].encode("ascii")
+        else:
+            self.image = None
+
+        if self.log_callbacks:
+            self.logger.debug(f"Updated value for topic {self.name}")
+
+    def get_image(self) -> Optional[str]:
+        self.take_image = True
+        start_time = time.time()
+        while not self.image:
+            time.sleep(0.1)
+            execution_time: float = time.time() - start_time
+            if execution_time > self.get_image_timeout:
+                raise TimeoutError(f"Unable to read image data from topic")
+        self.take_image = False
+        return self.image
