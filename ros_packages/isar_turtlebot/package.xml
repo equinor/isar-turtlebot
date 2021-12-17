@@ -55,6 +55,8 @@
   <build_depend>rospy</build_depend>
   <build_depend>turtlebot3_bringup</build_depend>
   <build_depend>turtlebot3_navigation</build_depend>
+  <build_depend>turtlebot3_slam</build_depend>
+  <build_depend>gmapping</build_depend>
   <build_depend>dwa_local_planner</build_depend>
   <build_export_depend>gazebo_ros_control</build_export_depend>
   <build_export_depend>gazebo_ros_pkgs</build_export_depend>
@@ -62,14 +64,18 @@
   <build_export_depend>rospy</build_export_depend>
   <build_export_depend>turtlebot3_bringup</build_export_depend>
   <build_export_depend>turtlebot3_navigation</build_export_depend>
+  <build_export_depend>turtlebot3_slam</build_export_depend>
   <build_export_depend>dwa_local_planner</build_export_depend>
+  <build_export_depend>gmapping</build_export_depend>
   <exec_depend>gazebo_ros_control</exec_depend>
   <exec_depend>gazebo_ros_pkgs</exec_depend>
   <exec_depend>rosbridge_server</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>turtlebot3_bringup</exec_depend>
   <exec_depend>turtlebot3_navigation</exec_depend>
+  <exec_depend>turtlebot3_slam</exec_depend>
   <exec_depend>dwa_local_planner</exec_depend>
+  <exec_depend>gmapping</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

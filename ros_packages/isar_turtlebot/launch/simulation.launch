@@ -1,12 +1,30 @@
 <launch>
+  <arg name="world_name" default="house"/>
+
+  <arg name="initial_pose_x" default="-3.0" />
+  <arg name="initial_pose_y" default="1.0" />
+  <arg name="x_pos" default="-3.0" />
+  <arg name="y_pos" default="1.0" />
+  <arg name="z_pos" default="0.0" />
+
+
 
   <!-- Gazebo -->
-  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_house.launch"/>
+  <include file="$(find isar_turtlebot)/launch/turtlebot.launch">
+    <arg name="world_name" value="$(arg world_name)"/>
+    <arg name="x_pos" value="$(arg x_pos)"/>
+    <arg name="y_pos" value="$(arg y_pos)"/>
+    <arg name="z_pos" value="$(arg z_pos)"/>
+  </include>
 
   <!-- Rosbridge -->
   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
 
   <!-- Navigation -->
-  <include file="$(find isar_turtlebot)/launch/navigation.launch"/>
+  <include file="$(find isar_turtlebot)/launch/navigation.launch">
+    <arg name="map_file" value="$(find isar_turtlebot)/maps/$(arg world_name).yaml"/>
+    <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
+    <arg name="initial_pose_y" default="$(arg initial_pose_y)"/>
+  </include>
 
 </launch>

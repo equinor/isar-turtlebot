@@ -19,16 +19,22 @@ RUN apt-get update &&\
     git
 
 
-RUN mkdir -p catkin_ws/src
+RUN mkdir -p catkin_ws/src 
 
 WORKDIR /home/catkin_ws/src/
 
 RUN git clone -b noetic-devel https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
 
 COPY ./ros_packages/ /home/catkin_ws/src/
-COPY ./install_dep.sh /home/
+COPY ./docker_scripts/install_dep.sh /home/
 RUN /home/install_dep.sh
 
-COPY ./entrypoint.sh /home/
+RUN mkdir -p /usr/share/gazebo-11/models
+COPY ./models /usr/share/gazebo-11/models
+COPY ./docker_scripts/setup.sh /usr/share/gazebo-11/setup.sh
+COPY ./docker_scripts/setup.sh /usr/share/gazebo/setup.sh
+
+COPY ./config /home/config
+COPY ./docker_scripts/entrypoint.sh /home/
 
 CMD /home/entrypoint.sh
