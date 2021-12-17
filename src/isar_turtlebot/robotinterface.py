@@ -26,15 +26,15 @@ from robot_interface.models.mission import (
 from robot_interface.robot_interface import RobotInterface
 
 from isar_turtlebot.config import config
-from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
+from isar_turtlebot.ros_bridge.ros_bridge import RosBridge, RosBridgeInterface
 from isar_turtlebot.turtlebot import Turtlebot
 
 
 class Robot(RobotInterface):
-    def __init__(self):
+    def __init__(self, bridge: RosBridgeInterface = RosBridge()):
         self.logger: Logger = logging.getLogger("robot")
 
-        self.turtlebot: Turtlebot = Turtlebot(bridge=RosBridge())
+        self.turtlebot: Turtlebot = Turtlebot(bridge=bridge)
 
     def schedule_task(self, task: Task) -> bool:
         self.turtlebot.publish_task(task=task)
