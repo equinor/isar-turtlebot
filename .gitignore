@@ -134,3 +134,7 @@ dmypy.json
 
 # Temporary storage folder
 results/
+
+# Ignore stl model files
+*.stl
+klab*

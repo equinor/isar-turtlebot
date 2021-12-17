@@ -1,4 +1,5 @@
 # isar-turtlebot
+
 ISAR implementation for the Turtlebot3 Waffle Pi.
 
 [ISAR](https://github.com/equinor/isar) - Integration and Supervisory control of Autonomous Robots - is a tool for integrating robot applications into Equinor systems. Through the ISAR API you can send command to a robot to do missions and collect results from the missions.
@@ -10,50 +11,65 @@ Running the full ISAR system requires an installation of a robot which satisfies
 ### Give Docker containers access to the Nvidia graphics card on the host machine
 
 #### Pre-requisites
+
 - git
 - docker
 - docker-compose
 
-NOTE: Docker must NOT be installed using Snap. The Snap version is not compatible with nvidia-docker2. Instead, follow the [official documentation](https://docs.docker.com/engine/install/ubuntu/) from Docker for installation. 
+NOTE: Docker must NOT be installed using Snap. The Snap version is not compatible with nvidia-docker2. Instead, follow the [official documentation](https://docs.docker.com/engine/install/ubuntu/) from Docker for installation.
 
 - To check if your Docker version was installed using snap run the following command.
-	```sh
-	systemctl list-units --type=service | grep docker
-	```
-	If the result is `snap.docker.dockerd.service` then the installation has been done using snap and must be reinstalled.
+  ```sh
+  systemctl list-units --type=service | grep docker
+  ```
+  If the result is `snap.docker.dockerd.service` then the installation has been done using snap and must be reinstalled.
 
 #### Installation nvidia docker
+
 1. Install the newest recommended drivers from Nvidia if not already as described by the following [documentation](https://linuxconfig.org/how-to-install-the-nvidia-drivers-on-ubuntu-20-04-focal-fossa-linux)
 2. Install nvidia-docker2 using the [official documentation](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
 
 ### Run simulation
 
 Build the container. This needs to be done once before one can give the container access to the screen.
+
 ```bash
 $ docker-compose build
 ```
 
 Give the docker container access to the screen, this needs to be done each time the computer is restarted.
+
 ```bash
 $ xhost +local:`docker inspect --format='{{ .Config.Hostname }}' turtle_sim`
 ```
 
 Start the simulation
+
 ```bash
 $ docker-compose up
 ```
 
-Build and start the simulation
+To build and start the simulation
+
 ```bash
 $ docker-compose up --build
 ```
+
+The simulation world that is used can be set by changing the world variable in the 'entrypoint.sh' file.
+
+## Adding new models
+
+New models can be added by placing the model that is used by Gazebo into '/models/new_world/' and adding a "new_world.world" file into 'ros_packages/isar_turtlebot/worlds/'. The map that is used by the planner should be placed into '/ros_packages/isar_turtlebot/maps/' with the name 'new_world.\*'. To add a default configuration for the initial pose and position of the robot in the simulation, add '/config/new_world.cfg' with the desired parameters.
+
+### Running custom model
+
+To run the simulation with the custom model, set `WORLD_NAME=new_world` in 'docker_scripts/entrypoint.sh'.
 
 ## Simulation without docker
 
 ### Simulator installation
 
 The simulator requires a computer or a virtual machine running Ubuntu. The turtlebot simulator works with different ROS/gazebo distributions, but this installation guide is based on `ROS noetic`. To install and run the turtlebot simulator, you will need to [install ROS noetic](http://wiki.ros.org/noetic/Installation/Ubuntu) on your computer. The `desktop` version should be sufficient.
-
 
 Then, [install dependent ROS packages](https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/), and the [simulation package](https://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/).
 
@@ -62,13 +78,14 @@ You also need to install gazebo with a version corresponding to your ROS distrib
 ```bash
 $ sudo apt-get install gazebo11
 ```
+
 The installation can be verified by running:
+
 ```bash
 $ gazebo
 ```
 
-Install the required [ROS packages](
-https://gazebosim.org/tutorials?tut=ros_installing&cat=connect_ros) for gazebo:
+Install the required [ROS packages](https://gazebosim.org/tutorials?tut=ros_installing&cat=connect_ros) for gazebo:
 
 ```bash
 $ sudo apt-get install ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-ros-control
@@ -84,11 +101,12 @@ $ export TURTLEBOT3_MODEL=waffle
 ```
 
 Build with catkin_make:
+
 ```bash
 $ cd ~/catkin_ws && catkin_make
 ```
 
-You will need a map (`map.pgm` and `map.yaml`). The map can be [generated](https://emanual.robotis.com/docs/en/platform/turtlebot3/slam_simulation), or the [example map](https://github.com/equinor/isar-turtlebot/tree/main/maps) can be used. 
+You will need a map (`map.pgm` and `map.yaml`). The map can be [generated](https://emanual.robotis.com/docs/en/platform/turtlebot3/slam_simulation), or the [example map](https://github.com/equinor/isar-turtlebot/tree/main/maps) can be used.
 
 The gazebo together with the navigation stack and rosbridge is then launched by:
 
@@ -96,7 +114,7 @@ The gazebo together with the navigation stack and rosbridge is then launched by:
 $ roslaunch launch/simulation.launch
 ```
 
-The robot  can be located with `2DPose Estimate` and naviagted with `2D Navigation Goal` in rviz. 
+The robot can be located with `2DPose Estimate` and naviagted with `2D Navigation Goal` in rviz.
 
 ### Simulations with ISAR
 
@@ -139,4 +157,5 @@ $ pip install -e ".[dev]"
 ```
 
 ## Contributing
+
 We welcome all kinds of contributions, including code, bug reports, issues, feature requests, and documentation. The preferred way of submitting a contribution is to either make an issue on github or by forking the project on github and making a pull requests.
