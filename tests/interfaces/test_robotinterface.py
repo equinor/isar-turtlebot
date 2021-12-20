@@ -4,5 +4,5 @@ from tests.mocks.ros_bridge import MockRosBridge
 
 
 def test_robotinterface():
-    robot = Robot(bridge=MockRosBridge())
+    robot = Robot(bridge=MockRosBridge)
     interface_test(robot)

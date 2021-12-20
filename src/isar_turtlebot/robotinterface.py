@@ -31,10 +31,10 @@ from isar_turtlebot.turtlebot import Turtlebot
 
 
 class Robot(RobotInterface):
-    def __init__(self, bridge: RosBridgeInterface = RosBridge()):
+    def __init__(self, bridge: RosBridgeInterface = RosBridge):
         self.logger: Logger = logging.getLogger("robot")
 
-        self.turtlebot: Turtlebot = Turtlebot(bridge=bridge)
+        self.turtlebot: Turtlebot = Turtlebot(bridge=bridge())
 
     def schedule_task(self, task: Task) -> bool:
         self.turtlebot.publish_task(task=task)
