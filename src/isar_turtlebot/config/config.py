@@ -1,6 +1,5 @@
 import importlib.resources as pkg_resources
 from configparser import ConfigParser
-from os import getenv
 
 from dotenv import load_dotenv
 from isar_turtlebot.config.configuration_error import ConfigurationError
