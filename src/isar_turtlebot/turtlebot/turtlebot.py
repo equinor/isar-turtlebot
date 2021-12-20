@@ -52,7 +52,6 @@ class Turtlebot:
         self.filenames: dict = dict()
 
     def publish_task(self, task: Task) -> None:
-        self.task_handler = self.task_handlers[type(task).__name__]
         task_input: Pose
         if isinstance(task, DriveToPose):
             task_input = task.pose

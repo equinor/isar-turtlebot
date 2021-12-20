@@ -24,25 +24,25 @@ class DriveToHandler(TaskHandler):
     ) -> None:
 
         goal_pose: Pose = task_input
-        goal_id: Optional[str] = self.goal_id()
+        goal_id: Optional[str] = self._goal_id()
 
         pose_message: dict = encode_pose_message(pose=goal_pose)
         self.bridge.execute_task.publish(message=pose_message)
 
         start_time: float = time.time()
-        while self.goal_id() == goal_id:
+        while self._goal_id() == goal_id:
             time.sleep(0.1)
             if (time.time() - start_time) > self.publishing_timeout:
                 raise TimeoutError("Publishing navigation message timed out")
 
-    def goal_id(self) -> Optional[str]:
-        message: dict = self.bridge.task_status.get_value()
-
-        try:
-            return message["status_list"][0]["goal_id"]["id"]
-        except (KeyError, IndexError):
-            return None
+    def _goal_id(self) -> Optional[str]:
+        goal_id: str = self.goal_id_from_message(
+            message=self.bridge.task_status.get_value()
+        )
+        return goal_id
 
     def get_status(self) -> Status:
-        message: dict = self.bridge.task_status.get_value()
-        return self.status_from_message(message=message)
+        status: Status = self.status_from_message(
+            message=self.bridge.task_status.get_value()
+        )
+        return status
