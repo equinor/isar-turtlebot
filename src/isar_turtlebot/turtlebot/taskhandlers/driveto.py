@@ -7,6 +7,7 @@ from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
 from isar_turtlebot.turtlebot.taskhandlers.taskhandler import TaskHandler
 from isar_turtlebot.utilities.pose_message import encode_pose_message
 from robot_interface.models.geometry.pose import Pose
+from robot_interface.models.mission.task import DriveToPose, Task
 
 
 class DriveToHandler(TaskHandler):
@@ -20,10 +21,10 @@ class DriveToHandler(TaskHandler):
 
     def start(
         self,
-        task_input: Pose,
+        task: DriveToPose,
     ) -> None:
 
-        goal_pose: Pose = task_input
+        goal_pose: Pose = task.pose
         goal_id: Optional[str] = self._goal_id()
 
         pose_message: dict = encode_pose_message(pose=goal_pose)

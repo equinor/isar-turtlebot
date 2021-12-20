@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Dict
 
 from isar_turtlebot.models.turtlebot_status import Status
+from robot_interface.models.mission.task import Task
 
 
 class TaskHandler(ABC):
@@ -9,7 +10,7 @@ class TaskHandler(ABC):
     """Baseclass for task handlers"""
 
     @abstractmethod
-    def start(self, task_input) -> None:
+    def start(self, task: Task) -> None:
         pass
 
     @abstractmethod
