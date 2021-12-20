@@ -48,7 +48,7 @@ class Robot(RobotInterface):
             raise TypeError from e
 
     def download_inspection_result(self, inspection: Inspection) -> Inspection:
-        if isinstance(inspection, Image):
+        if isinstance(inspection, (Image, ThermalImage)):
             try:
                 image_data = self.turtlebot.read_image(inspection_id=inspection.id)
                 inspection.data = image_data
@@ -56,20 +56,6 @@ class Robot(RobotInterface):
                 self.logger.error("Failed to retrieve inspection result", e)
                 raise FileNotFoundError("No inspection was found") from e
 
-        elif isinstance(inspection, ThermalImage):
-            try:
-                image_data = self.turtlebot.read_image(inspection_id=inspection.id)
-                image = PILImage.open(BytesIO(image_data))
-                image_array = np.asarray(image)
-                image_red = image_array[:, :, 0]
-                image_grey = PILImage.fromarray(image_red)
-                image_array_io = BytesIO()
-                image_grey.save(image_array_io, format=inspection.metadata.file_type)
-
-                inspection.data = image_array_io.getvalue()
-            except Exception as e:
-                self.logger.error("Failed to retrieve inspection result", e)
-                raise FileNotFoundError("Failed to retrieve inspection result") from e
         return inspection
 
     def robot_pose(self) -> Pose:

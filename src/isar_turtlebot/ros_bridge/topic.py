@@ -1,11 +1,8 @@
-import base64
 import logging
 import time
 from abc import ABC, abstractmethod
 from logging import Logger
-from pathlib import Path
 from typing import Any, Optional
-from uuid import UUID, uuid4
 
 from isar_turtlebot.config import config
 from roslibpy import Message, Ros
@@ -24,7 +21,7 @@ class TopicInterface(ABC):
 
 class ImageTopicInterface(ABC):
     @abstractmethod
-    def get_image(self, inspection_id: UUID) -> bytes:
+    def get_image(self) -> bytes:
         pass
 
 
@@ -97,7 +94,7 @@ class ImageTopic(ImageTopicInterface):
         if self.log_callbacks:
             self.logger: Logger = logging.getLogger("turtlebot_bridge")
 
-        self.image: Optional[str] = None
+        self.image: Optional[bytes] = None
         self.take_image: bool = False
         self.get_image_timeout: float = get_image_timeout
 

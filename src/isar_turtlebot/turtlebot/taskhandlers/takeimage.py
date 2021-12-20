@@ -17,6 +17,7 @@ class TakeImageHandler(TaskHandler):
         self,
         bridge: RosBridge,
         storage_folder: Path = Path(config.get("storage", "storage_folder")),
+        image_filetype: str = config.get("metadata", "image_filetype"),
         publishing_timeout: float = config.getfloat("mission", "publishing_timeout"),
         inspection_pose_timeout: float = config.getfloat(
             "mission", "inspection_pose_timeout"
@@ -24,6 +25,7 @@ class TakeImageHandler(TaskHandler):
     ) -> None:
         self.bridge = bridge
         self.storage_folder = storage_folder
+        self.image_filetype = image_filetype
         self.publishing_timeout = publishing_timeout
         self.inspection_pose_timeout = inspection_pose_timeout
 
@@ -82,10 +84,10 @@ class TakeImageHandler(TaskHandler):
         return move_status
 
     def _write_image_bytes(self):
-        image_data: str = self._get_image_data()
-        image_bytes: bytes = base64.b64decode(image_data)
+        encoded_image_data: bytes = self._get_image_data()
+        image_bytes: bytes = base64.b64decode(encoded_image_data)
         self.filename: Path = Path(
-            f"{self.storage_folder.as_posix()}/{str(uuid4())}.jpg"
+            f"{self.storage_folder.as_posix()}/{str(uuid4())}.{self.image_filetype}"
         )
 
         self.filename.parent.mkdir(exist_ok=True)

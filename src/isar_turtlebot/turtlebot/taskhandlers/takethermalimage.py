@@ -1,9 +1,12 @@
 import base64
 import time
+from io import BytesIO
 from pathlib import Path
 from typing import Optional
 from uuid import uuid4
 
+import numpy as np
+import PIL.Image as PILImage
 from isar_turtlebot.config import config
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
@@ -17,6 +20,7 @@ class TakeThermalImageHandler(TaskHandler):
         self,
         bridge: RosBridge,
         storage_folder: Path = Path(config.get("storage", "storage_folder")),
+        thermal_image_filetype: str = config.get("metadata", "thermal_image_filetype"),
         publishing_timeout: float = config.getfloat("mission", "publishing_timeout"),
         inspection_pose_timeout: float = config.getfloat(
             "mission", "inspection_pose_timeout"
@@ -24,6 +28,7 @@ class TakeThermalImageHandler(TaskHandler):
     ) -> None:
         self.bridge = bridge
         self.storage_folder = storage_folder
+        self.thermal_image_filetype = thermal_image_filetype
         self.publishing_timeout = publishing_timeout
         self.inspection_pose_timeout = inspection_pose_timeout
 
@@ -82,10 +87,12 @@ class TakeThermalImageHandler(TaskHandler):
         return move_status
 
     def _write_image_bytes(self):
-        image_data: str = self._get_image_data()
-        image_bytes: bytes = base64.b64decode(image_data)
+        encoded_image_data: bytes = self._get_image_data()
+        image_bytes: bytes = base64.b64decode(encoded_image_data)
+        image_bytes: bytes = self._convert_to_thermal(image_bytes)
+
         self.filename: Path = Path(
-            f"{self.storage_folder.as_posix()}/{str(uuid4())}.jpg"
+            f"{self.storage_folder.as_posix()}/{str(uuid4())}.{self.thermal_image_filetype}"
         )
 
         self.filename.parent.mkdir(exist_ok=True)
@@ -94,5 +101,16 @@ class TakeThermalImageHandler(TaskHandler):
             image_file.write(image_bytes)
 
     def _get_image_data(self):
-        image_data = self.bridge.visual_inspection.get_image()
-        return image_data
+        encoded_image_data: bytes = self.bridge.visual_inspection.get_image()
+        return encoded_image_data
+
+    def _convert_to_thermal(self, image_bytes: bytes) -> bytes:
+        image = PILImage.open(BytesIO(image_bytes))
+        image_array = np.asarray(image)
+        image_gray_array = image_array[:, :, 0]
+        image_gray_image = PILImage.fromarray(image_gray_array)
+
+        image_array_io = BytesIO()
+        image_gray_image.save(image_array_io, format=self.thermal_image_filetype)
+
+        return image_array_io.getvalue()
