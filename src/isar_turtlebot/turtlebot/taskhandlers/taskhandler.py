@@ -17,6 +17,13 @@ class TaskHandler(ABC):
         pass
 
     @staticmethod
+    def goal_id_from_message(message: Dict) -> Status:
+        try:
+            return message["status_list"][0]["goal_id"]["id"]
+        except (KeyError, IndexError):
+            return None
+
+    @staticmethod
     def status_from_message(message: Dict) -> Status:
         status_code = message["status_list"][0]["status"]
         if status_code == 1:

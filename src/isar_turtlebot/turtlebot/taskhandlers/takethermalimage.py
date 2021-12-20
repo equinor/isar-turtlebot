@@ -70,19 +70,20 @@ class TakeThermalImageHandler(TaskHandler):
         return self.status
 
     def _goal_id(self) -> Optional[str]:
-        message: dict = self.bridge.task_status.get_value()
-
-        try:
-            return message["status_list"][0]["goal_id"]["id"]
-        except (KeyError, IndexError):
-            return None
+        goal_id: str = self.goal_id_from_message(
+            message=self.bridge.task_status.get_value()
+        )
+        return goal_id
 
     def _move_status(self) -> Status:
-        message: dict = self.bridge.task_status.get_value()
-        return self.status_from_message(message=message)
+        move_status: Status = self.status_from_message(
+            message=self.bridge.task_status.get_value()
+        )
+        return move_status
 
     def _write_image_bytes(self):
-        image_bytes = base64.b64decode(self._get_image_data())
+        image_data: str = self._get_image_data()
+        image_bytes: bytes = base64.b64decode(image_data)
         self.filename: Path = Path(
             f"{self.storage_folder.as_posix()}/{str(uuid4())}.jpg"
         )
