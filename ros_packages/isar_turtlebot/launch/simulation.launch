@@ -10,7 +10,7 @@
 
 
   <!-- Gazebo -->
-  <include file="$(find isar_turtlebot)/launch/turtlebot.launch">
+  <include file="$(find isar_turtlebot)/launch/gazebo_turtlebot.launch">
     <arg name="world_name" value="$(arg world_name)"/>
     <arg name="x_pos" value="$(arg x_pos)"/>
     <arg name="y_pos" value="$(arg y_pos)"/>

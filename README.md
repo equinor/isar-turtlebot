@@ -146,6 +146,26 @@ Missions can be posted to the robot through [ISAR](https://github.com/equinor/is
 
 If the example map are used, you can try the example mission number `2`.
 
+## Simulation with manipulator
+
+The turtlebot can be equipped with a [manipulator](https://emanual.robotis.com/docs/en/platform/turtlebot3/manipulation/#manipulation) which also can be included in the simulations. Additional software must be installed for the manipulator simulation.
+
+```bash
+$ cd ~/catkin_ws/src/
+$ git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation.git
+$ git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation_simulations.git
+$ git clone https://github.com/ROBOTIS-GIT/open_manipulator_dependencies.git
+$ sudo apt install ros-noetic-ros-control* && ros-noetic-control* && ros-noetic-moveit*
+$ cd ~/catkin_ws && catkin_make
+```
+
+The manipulator can be controlled using rviz or a simpler GUI which is enabled by setting the roslaunch argument
+`open_manipulator_rviz` or `open_manipulator_gui` respectively to true. Both controllers can also be run simultaneously. E.g to launch simulation with the GUI control:
+
+```bash
+$ roslaunch isar-turtlebot turtlebot_manipulator.launch open_manipulator_gui:=true
+```
+
 ## Development
 
 For local development, please fork the repository. Then, clone and install in the repository root folder:
