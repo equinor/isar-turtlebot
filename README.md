@@ -155,16 +155,17 @@ $ cd ~/catkin_ws/src/
 $ git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation.git
 $ git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation_simulations.git
 $ git clone https://github.com/ROBOTIS-GIT/open_manipulator_dependencies.git
-$ sudo apt install ros-noetic-ros-control* && ros-noetic-control* && ros-noetic-moveit*
 $ cd ~/catkin_ws && catkin_make
 ```
 
 The manipulator can be controlled using rviz or a simpler GUI which is enabled by setting the roslaunch argument
-`open_manipulator_rviz` or `open_manipulator_gui` respectively to true. Both controllers can also be run simultaneously. E.g to launch simulation with the GUI control:
+`open_manipulator_rviz` or `open_manipulator_gui` respectively to true. Both controllers can also be run simultaneously. These arguments are also found in `entrypoint.sh` for running simulation with manipulator in docker which is enabled by setting `ENABLE_MANIPULATOR=true`. To launch simulation with the GUI control:
 
 ```bash
 $ roslaunch isar-turtlebot turtlebot_manipulator.launch open_manipulator_gui:=true
 ```
+
+The simulation can also run in docker as described in the section for [docker](#run-simulation)
 
 ## Development
 
