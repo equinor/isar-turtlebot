@@ -23,7 +23,13 @@ RUN mkdir -p catkin_ws/src
 
 WORKDIR /home/catkin_ws/src/
 
-RUN git clone -b noetic-devel https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
+RUN git clone -b noetic-devel https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git &&\
+    git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation.git &&\
+    git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation_simulations.git &&\
+    git clone https://github.com/ROBOTIS-GIT/open_manipulator_dependencies.git
+  
+
+
 
 COPY ./ros_packages/ /home/catkin_ws/src/
 COPY ./docker_scripts/install_dep.sh /home/
