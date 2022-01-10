@@ -18,11 +18,11 @@ Running the full ISAR system requires an installation of a robot which satisfies
 
 NOTE: Docker must NOT be installed using Snap. The Snap version is not compatible with nvidia-docker2. Instead, follow the [official documentation](https://docs.docker.com/engine/install/ubuntu/) from Docker for installation.
 
-- To check if your Docker version was installed using snap run the following command.
-  ```sh
-  systemctl list-units --type=service | grep docker
-  ```
-  If the result is `snap.docker.dockerd.service` then the installation has been done using snap and must be reinstalled.
+To check if your Docker version was installed using snap, run the following command
+```sh
+systemctl list-units --type=service | grep docker
+```
+If the result is `snap.docker.dockerd.service`, the installation has been done using snap and docker must be reinstalled.
 
 #### Installation nvidia docker
 
@@ -34,25 +34,25 @@ NOTE: Docker must NOT be installed using Snap. The Snap version is not compatibl
 Build the container. This needs to be done once before one can give the container access to the screen.
 
 ```bash
-$ docker-compose build
+docker-compose build
 ```
 
 Give the docker container access to the screen, this needs to be done each time the computer is restarted.
 
 ```bash
-$ xhost +local:`docker inspect --format='{{ .Config.Hostname }}' turtle_sim`
+xhost +local:`docker inspect --format='{{ .Config.Hostname }}' turtle_sim`
 ```
 
 Start the simulation
 
 ```bash
-$ docker-compose up
+docker-compose up
 ```
 
 To build and start the simulation
 
 ```bash
-$ docker-compose up --build
+docker-compose up --build
 ```
 
 The simulation world that is used can be set by changing the world variable in the 'entrypoint.sh' file.
@@ -76,19 +76,19 @@ Then, [install dependent ROS packages](https://emanual.robotis.com/docs/en/platf
 You also need to install gazebo with a version corresponding to your ROS distribution:
 
 ```bash
-$ sudo apt-get install gazebo11
+sudo apt-get install gazebo11
 ```
 
 The installation can be verified by running:
 
 ```bash
-$ gazebo
+gazebo
 ```
 
 Install the required [ROS packages](https://gazebosim.org/tutorials?tut=ros_installing&cat=connect_ros) for gazebo:
 
 ```bash
-$ sudo apt-get install ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-ros-control
+sudo apt-get install ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-ros-control
 ```
 
 ### Running the simulation
@@ -96,14 +96,14 @@ $ sudo apt-get install ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-ros-control
 First, you will need to set the following environment variables:
 
 ```bash
-$ export ISAR_TURTLEBOT_PATH=<path/to/isar-turtlebot>
-$ export TURTLEBOT3_MODEL=waffle
+export ISAR_TURTLEBOT_PATH=<path/to/isar-turtlebot>
+export TURTLEBOT3_MODEL=waffle
 ```
 
 Build with catkin_make:
 
 ```bash
-$ cd ~/catkin_ws && catkin_make
+cd ~/catkin_ws && catkin_make
 ```
 
 You will need a map (`map.pgm` and `map.yaml`). The map can be [generated](https://emanual.robotis.com/docs/en/platform/turtlebot3/slam_simulation), or the [example map](https://github.com/equinor/isar-turtlebot/tree/main/maps) can be used.
@@ -111,7 +111,7 @@ You will need a map (`map.pgm` and `map.yaml`). The map can be [generated](https
 The gazebo together with the navigation stack and rosbridge is then launched by:
 
 ```bash
-$ roslaunch launch/simulation.launch
+roslaunch launch/simulation.launch
 ```
 
 The robot can be located with `2DPose Estimate` and naviagted with `2D Navigation Goal` in rviz.
@@ -121,25 +121,25 @@ The robot can be located with `2DPose Estimate` and naviagted with `2D Navigatio
 Download and install [ISAR](github.com/equinor/isar) on your computer. Follow the [robot integration guide](https://github.com/equinor/isar#robot-integration) installing `isar-turtlebot`. Remember to set the robot directory environment variable:
 
 ```bash
-$ export ROBOT_PACKAGE=isar_turtlebot
+export ROBOT_PACKAGE=isar_turtlebot
 ```
 
 For the ISAR API to communicate with the simulator, you will need rosbridge:
 
 ```bash
-$ sudo apt-get install ros-noetic-rosbridge-suite
+sudo apt-get install ros-noetic-rosbridge-suite
 ```
 
 You can now [run the simulation](#running-the-simulation) and launch rosbridge:
 
 ```bash
-$ roslaunch rosbridge_server rosbridge_websocket.launch
+roslaunch rosbridge_server rosbridge_websocket.launch
 ```
 
 To run ISAR:
 
 ```bash
-$ python main.py
+python main.py
 ```
 
 Missions can be posted to the robot through [ISAR](https://github.com/equinor/isar#running-a-robot-mission).
@@ -151,9 +151,9 @@ If the example map are used, you can try the example mission number `2`.
 For local development, please fork the repository. Then, clone and install in the repository root folder:
 
 ```bash
-$ git clone https://github.com/equinor/isar-turtlebot
-$ cd isar-turtlebot
-$ pip install -e ".[dev]"
+git clone https://github.com/equinor/isar-turtlebot
+cd isar-turtlebot
+pip install -e ".[dev]"
 ```
 
 ## Contributing
