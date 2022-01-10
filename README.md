@@ -159,10 +159,16 @@ $ cd ~/catkin_ws && catkin_make
 ```
 
 The manipulator can be controlled using rviz or a simpler GUI which is enabled by setting the roslaunch argument
-`open_manipulator_rviz` or `open_manipulator_gui` respectively to true. Both controllers can also be run simultaneously. These arguments are also found in `entrypoint.sh` for running simulation with manipulator in docker which is enabled by setting `ENABLE_MANIPULATOR=true`. To launch simulation with the GUI control:
+`manipulator_gui` to `"rviz"` or `"simple"` respectively. With the latter as default value. There is no constraints for running both controllers simultaneously but such functionality is not implemented. Running simulation with manipulator can be done by the roslaunch command with the preqruisite of having isar-turtlebot installed as a ros package.
 
 ```bash
 $ roslaunch isar-turtlebot turtlebot_manipulator.launch open_manipulator_gui:=true
+```
+
+Alternatively the simulation with manipulator can also run in docker by including the parameter `ENABLE_MANIPULATOR` and the controller GUI set according to the description above:
+
+```bash
+sudo ENABLE_MANIPULATOR=true MANIPULATOR_GUI="rviz" docker-compose up --build
 ```
 
 The simulation can also run in docker as described in the section for [docker](#run-simulation)
