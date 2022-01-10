@@ -10,6 +10,8 @@ services:
       - "9090:9090"
     environment:
       - DISPLAY=${DISPLAY}
+      - ENABLE_MANIPULATOR=${ENABLE_MANIPULATOR:-false}
+      - MANIPULATOR_GUI=${MANIPULATOR_GUI}
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
     runtime: nvidia

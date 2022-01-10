@@ -8,8 +8,8 @@
   <arg name="use_sim_time" default="true"/>
   <arg name="map_file" default="$(find isar_turtlebot)/maps/house.yaml"/>
   <arg name="open_navigation_rviz" default="true"/>
-  <arg name="open_manipulator_rviz" default="false"/>
-  <arg name="open_manipulator_gui" default="true"/>
+  <arg name="manipulator_gui" default="simple"/>
+
 
   <arg name="move_forward_only" default="false"/>
 
@@ -86,18 +86,18 @@
           args="-d $(find turtlebot3_manipulation_navigation)/rviz/turtlebot3_manipulation_navigation.rviz" output="screen"/>
   </group>
 
-  <!-- Manipulator rviz -->
-  <group if="$(arg open_manipulator_rviz)">
+
+  <!-- Manipulator GUI-->
+  <group if="$(eval manipulator_gui == 'simple')">
+    <include file="$(find turtlebot3_manipulation_gui)/launch/turtlebot3_manipulation_gui.launch">
+    </include>
+  </group>
+
+  <group if="$(eval manipulator_gui == 'rviz')">
     <include file="$(find turtlebot3_manipulation_moveit_config)/launch/moveit_rviz.launch">
     </include>
   </group>
 
-
-  <!-- Manipulator GUI -->
-  <group if="$(arg open_manipulator_gui)">
-    <include file="$(find turtlebot3_manipulation_gui)/launch/turtlebot3_manipulation_gui.launch">
-    </include>
-  </group>
 
 
 
