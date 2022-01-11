@@ -11,6 +11,6 @@ rosdep install --from-paths ./src --ignore-packages-from-source --rosdistro noet
 
 catkin build
 
-echo 'source /opt/ros/noetic/setup.bash' >> ~/.bashrc
+echo 'source /opt/ros/noetic/setup.bash' >> ~/.bashrc
 echo 'source /home/catkin_ws/devel/setup.bash'>> ~/.bashrc
 echo 'export TURTLEBOT3_MODEL=waffle'>> ~/.bashrc
