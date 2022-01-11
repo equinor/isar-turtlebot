@@ -19,9 +19,11 @@ Running the full ISAR system requires an installation of a robot which satisfies
 NOTE: Docker must NOT be installed using Snap. The Snap version is not compatible with nvidia-docker2. Instead, follow the [official documentation](https://docs.docker.com/engine/install/ubuntu/) from Docker for installation.
 
 To check if your Docker version was installed using snap, run the following command
+
 ```sh
 systemctl list-units --type=service | grep docker
 ```
+
 If the result is `snap.docker.dockerd.service`, the installation has been done using snap and docker must be reinstalled.
 
 #### Installation nvidia docker
