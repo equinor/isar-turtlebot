@@ -1,6 +1,6 @@
 <launch>
   <arg name="world_name" default="house"/>
-
+  <arg name="teleop_controller" default="disabled"/>
   <arg name="initial_pose_x" default="-3.0" />
   <arg name="initial_pose_y" default="1.0" />
   <arg name="x_pos" default="-3.0" />
@@ -21,10 +21,21 @@
   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
 
   <!-- Navigation -->
-  <include file="$(find isar_turtlebot)/launch/navigation.launch">
-    <arg name="map_file" value="$(find isar_turtlebot)/maps/$(arg world_name).yaml"/>
-    <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
-    <arg name="initial_pose_y" default="$(arg initial_pose_y)"/>
-  </include>
+  <group if="$(eval teleop_controller=='disabled')">
+    <include file="$(find isar_turtlebot)/launch/navigation.launch">
+      <arg name="map_file" value="$(find isar_turtlebot)/maps/$(arg world_name).yaml"/>
+      <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
+      <arg name="initial_pose_y" default="$(arg initial_pose_y)"/>
+    </include>
+  </group>
+
+
+  <!-- Teleoperation -->
+  <group unless="$(eval teleop_controller=='disabled')">
+      <include file="$(find isar_turtlebot)/launch/teleoperation.launch">
+        <arg name="teleop_controller" value="$(arg teleop_controller)"/>
+      </include>
+  </group>
+
 
 </launch>

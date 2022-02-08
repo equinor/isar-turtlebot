@@ -61,7 +61,8 @@
   <depend>ros_control</depend>
   <depend>ros_controllers</depend>
   <depend>moveit</depend>
-
+  <depend>joy</depend>
+  <depend>teleop_twist_joy</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
