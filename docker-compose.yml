@@ -10,9 +10,12 @@ services:
       - "9090:9090"
     environment:
       - DISPLAY=${DISPLAY}
+      - TELEOP_CONTROLLER=${TELEOP_CONTROLLER:-disabled}
       - ENABLE_MANIPULATOR=${ENABLE_MANIPULATOR:-false}
-      - MANIPULATOR_GUI=${MANIPULATOR_GUI}
+      - MANIPULATOR_GUI=${MANIPULATOR_GUI:-disabled}
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
+    devices:
+      - /dev/input/js0
     runtime: nvidia
     tty: true

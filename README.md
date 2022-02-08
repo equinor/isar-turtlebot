@@ -181,13 +181,19 @@ The turtlebot base can be controlled manually by publishing to the ros topic `/c
 
 ### Keyboard
 
-Install the teleoperation package with:
+With the simulation running open a new terminal. If running in docker, access the docker container with:
+
+```bash
+sudo docker exec -it isar_turtlebot bash
+```
+
+Install the teleoperation package (if running in docker this package must be installed every time):
 
 ```bash
 sudo apt-get install ros-noetic-teleop-twist-keyboard
 ```
 
-With the simulation running, open a new terminal and enable teleoperation with:
+With the teleoperation package installed, enable it with:
 
 ```bash
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py

@@ -1,10 +1,13 @@
 FROM osrf/ros:noetic-desktop-full
 
 
-ARG ENABLE_MANIPULATOR
-ARG OPEN_MANIPULATOR_GUI
+ARG TELEOP_CONTROLLER
+ENV TELEOP_CONTROLLER=${TELEOP_CONTROLLER}
 
+ARG ENABLE_MANIPULATOR
 ENV ENABLE_MANIPULATOR=${ENABLE_MANIPULATOR}
+
+ARG OPEN_MANIPULATOR_GUI
 ENV MANIPULATOR_GUI=${MANIPULATOR_GUI}
 
 
@@ -36,7 +39,7 @@ RUN git clone -b noetic-devel https://github.com/ROBOTIS-GIT/turtlebot3_simulati
     git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation.git &&\
     git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation_simulations.git &&\
     git clone https://github.com/ROBOTIS-GIT/open_manipulator_dependencies.git
-  
+
 
 
 

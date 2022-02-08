@@ -24,5 +24,5 @@ if [ "$ENABLE_MANIPULATOR" = true ]
 then
   roslaunch isar_turtlebot turtlebot_manipulator.launch world_name:=$WORLD_NAME initial_pose_x:=$INITIAL_POSE_X initial_pose_y:=$INITIAL_POSE_Y x_pos:=$X_POS y_pos:=$Y_POS z_pos:=$Z_POS manipulator_gui:=$MANIPULATOR_GUI
 else
-  roslaunch isar_turtlebot simulation.launch world_name:=$WORLD_NAME initial_pose_x:=$INITIAL_POSE_X initial_pose_y:=$INITIAL_POSE_Y x_pos:=$X_POS y_pos:=$Y_POS z_pos:=$Z_POS
+  roslaunch isar_turtlebot simulation.launch world_name:=$WORLD_NAME teleop_controller:=$TELEOP_CONTROLLER initial_pose_x:=$INITIAL_POSE_X initial_pose_y:=$INITIAL_POSE_Y x_pos:=$X_POS y_pos:=$Y_POS z_pos:=$Z_POS
 fi
