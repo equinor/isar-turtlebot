@@ -175,6 +175,43 @@ sudo ENABLE_MANIPULATOR=true MANIPULATOR_GUI="rviz" docker-compose up --build
 
 The simulation can also run in docker as described in the section for [docker](#run-simulation)
 
+## Teleoperation
+
+The turtlebot base can be controlled manually by publishing to the ros topic `/cmd_vel`. Using a keyboard, the ros package [teleop_twist_keyboard](https://wiki.ros.org/teleop_twist_keyboard) translates keyboard inputs to ros messages. Similarly, the ros package [teleop_twist_joy](https://wiki.ros.org/teleop_twist_joy) handles joystick messages.
+
+### Keyboard
+
+Install the teleoperation package with:
+
+```bash
+sudo apt-get install ros-noetic-teleop-twist-keyboard
+```
+
+With the simulation running, open a new terminal and enable teleoperation with:
+
+```bash
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+```
+
+### Joystick
+
+Teleoperating with a joystick requires an additional package, [joy](https://wiki.ros.org/joy), for reading the joystick input and publishing it to a topic. This package should be compatible with any joystick supported by Linux. Currently this is only working when running simulation locally and does not work when running the simulation in docker.
+
+```bash
+sudo apt-get install ros-noetic-joy  ros-noetic-teleop-twist-joy
+```
+
+After you connected the joystick it should be found as an input decvice "/dev/input/jsX", where X is the unique id-number of the joystick (default "js0").
+To verify if the joystick is setup correctly find the unique id-number with `$ ls /dev/input/` and run `$ jstest /dev/input/jsX`. Enable teleoperation by opening two new terminals and start up "joy_node" and "teleop_node". To control the turtlebot hold in `enable_button` and use the joystick. See documention for [teleop_twist_joy](https://wiki.ros.org/teleop_twist_joy) for more information.
+
+```bash
+rosrun joy joy_node
+```
+
+```bash
+rosrun teleop_twist_joy teleop_node
+```
+
 ## Development
 
 For local development, please fork the repository. Then, clone and install in the repository root folder:
