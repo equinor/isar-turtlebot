@@ -1,13 +1,14 @@
 import time
 from typing import Optional
 
+from robot_interface.models.geometry.pose import Pose
+from robot_interface.models.mission.task import DriveToPose
+
 from isar_turtlebot.config import config
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
 from isar_turtlebot.turtlebot.taskhandlers.taskhandler import TaskHandler
 from isar_turtlebot.utilities.pose_message import encode_pose_message
-from robot_interface.models.geometry.pose import Pose
-from robot_interface.models.mission.task import DriveToPose, Task
 
 
 class DriveToHandler(TaskHandler):

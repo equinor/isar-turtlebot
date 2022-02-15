@@ -4,6 +4,11 @@ from pathlib import Path
 from typing import Optional, Sequence
 from uuid import UUID
 
+from robot_interface.models.exceptions import RobotException
+from robot_interface.models.inspection.inspection import Inspection
+from robot_interface.models.mission.status import TaskStatus
+from robot_interface.models.mission.task import InspectionTask, Task
+
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge import RosBridge
 from isar_turtlebot.turtlebot.taskhandlers import (
@@ -12,10 +17,6 @@ from isar_turtlebot.turtlebot.taskhandlers import (
     TakeThermalImageHandler,
 )
 from isar_turtlebot.turtlebot.taskhandlers.taskhandler import TaskHandler
-from robot_interface.models.exceptions import RobotException
-from robot_interface.models.inspection.inspection import Inspection
-from robot_interface.models.mission.status import TaskStatus
-from robot_interface.models.mission.task import InspectionTask, Task
 
 
 class Turtlebot:

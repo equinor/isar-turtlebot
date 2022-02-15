@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Dict
 
-from isar_turtlebot.models.turtlebot_status import Status
 from robot_interface.models.mission.task import Task
+
+from isar_turtlebot.models.turtlebot_status import Status
 
 
 class TaskHandler(ABC):

@@ -4,9 +4,9 @@ from abc import ABC, abstractmethod
 from logging import Logger
 from typing import Any, Optional
 
+from roslibpy import Message, Ros, Topic as RosTopic
+
 from isar_turtlebot.config import config
-from roslibpy import Message, Ros
-from roslibpy import Topic as RosTopic
 
 
 class TopicInterface(ABC):
