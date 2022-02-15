@@ -1,11 +1,9 @@
 import numpy as np
-
-from scipy.spatial.transform import Rotation
-
 from robot_interface.models.geometry.frame import Frame
 from robot_interface.models.geometry.orientation import Orientation
 from robot_interface.models.geometry.pose import Pose
 from robot_interface.models.geometry.position import Position
+from scipy.spatial.transform import Rotation
 
 
 def get_inspection_pose(current_pose: Pose, target: Position) -> Pose:

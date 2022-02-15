@@ -1,5 +1,3 @@
-import logging
-from logging import Logger
 from typing import Sequence
 
 from robot_interface.models.inspection.inspection import Inspection

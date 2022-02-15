@@ -1,9 +1,17 @@
 import base64
-from datetime import datetime
 import time
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
 from uuid import uuid4
+
+from robot_interface.models.geometry.pose import Pose
+from robot_interface.models.inspection.inspection import (
+    Image,
+    ImageMetadata,
+    TimeIndexedPose,
+)
+from robot_interface.models.mission.task import TakeImage
 
 from isar_turtlebot.config import config
 from isar_turtlebot.models.turtlebot_status import Status
@@ -14,13 +22,6 @@ from isar_turtlebot.utilities.pose_message import (
     decode_pose_message,
     encode_pose_message,
 )
-from robot_interface.models.geometry.pose import Pose
-from robot_interface.models.inspection.inspection import (
-    Image,
-    ImageMetadata,
-    TimeIndexedPose,
-)
-from robot_interface.models.mission.task import TakeImage
 
 
 class TakeImageHandler(TaskHandler):

@@ -1,13 +1,21 @@
 import base64
-from datetime import datetime
 import time
+from datetime import datetime
 from io import BytesIO
 from pathlib import Path
 from typing import Optional
 from uuid import uuid4
 
-import numpy as np
 import PIL.Image as PILImage
+import numpy as np
+from robot_interface.models.geometry.pose import Pose
+from robot_interface.models.inspection.inspection import (
+    ThermalImage,
+    ThermalImageMetadata,
+    TimeIndexedPose,
+)
+from robot_interface.models.mission.task import TakeThermalImage
+
 from isar_turtlebot.config import config
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
@@ -17,14 +25,6 @@ from isar_turtlebot.utilities.pose_message import (
     decode_pose_message,
     encode_pose_message,
 )
-from robot_interface.models.geometry.pose import Pose
-from robot_interface.models.inspection.inspection import (
-    Inspection,
-    ThermalImage,
-    ThermalImageMetadata,
-    TimeIndexedPose,
-)
-from robot_interface.models.mission.task import TakeThermalImage
 
 
 class TakeThermalImageHandler(TaskHandler):
