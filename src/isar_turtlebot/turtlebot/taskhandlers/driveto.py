@@ -1,6 +1,8 @@
 import time
 from typing import Optional
 
+from isar.services.coordinates.transformation import Transformation
+from robot_interface.models.geometry.frame import Frame
 from robot_interface.models.geometry.pose import Pose
 from robot_interface.models.mission.task import DriveToPose
 
@@ -15,17 +17,19 @@ class DriveToHandler(TaskHandler):
     def __init__(
         self,
         bridge: RosBridge,
+        transform: Transformation,
         publishing_timeout: float = config.getfloat("mission", "publishing_timeout"),
     ) -> None:
-        self.bridge = bridge
-        self.publishing_timeout = publishing_timeout
+        self.bridge: RosBridge = bridge
+        self.transform: Transformation = transform
+        self.publishing_timeout: float = publishing_timeout
 
     def start(
         self,
         task: DriveToPose,
     ) -> None:
 
-        goal_pose: Pose = task.pose
+        goal_pose: Pose = self.transform.transform_pose(pose=task.pose, to_=Frame.Robot)
         goal_id: Optional[str] = self._goal_id()
 
         pose_message: dict = encode_pose_message(pose=goal_pose)

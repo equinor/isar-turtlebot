@@ -137,4 +137,4 @@ results/
 
 # Ignore stl model files
 *.stl
-klab*
+models/klab*

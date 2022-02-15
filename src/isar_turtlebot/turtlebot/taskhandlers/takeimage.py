@@ -5,7 +5,10 @@ from pathlib import Path
 from typing import Optional
 from uuid import uuid4
 
+from isar.services.coordinates.transformation import Transformation
+from robot_interface.models.geometry.frame import Frame
 from robot_interface.models.geometry.pose import Pose
+from robot_interface.models.geometry.position import Position
 from robot_interface.models.inspection.inspection import (
     Image,
     ImageMetadata,
@@ -28,6 +31,7 @@ class TakeImageHandler(TaskHandler):
     def __init__(
         self,
         bridge: RosBridge,
+        transform: Transformation,
         storage_folder: Path = Path(config.get("storage", "storage_folder")),
         image_filetype: str = config.get("metadata", "image_filetype"),
         publishing_timeout: float = config.getfloat("mission", "publishing_timeout"),
@@ -35,11 +39,12 @@ class TakeImageHandler(TaskHandler):
             "mission", "inspection_pose_timeout"
         ),
     ) -> None:
-        self.bridge = bridge
-        self.storage_folder = storage_folder
-        self.image_filetype = image_filetype
-        self.publishing_timeout = publishing_timeout
-        self.inspection_pose_timeout = inspection_pose_timeout
+        self.bridge: RosBridge = bridge
+        self.transform: Transformation = transform
+        self.storage_folder: Path = storage_folder
+        self.image_filetype: str = image_filetype
+        self.publishing_timeout: float = publishing_timeout
+        self.inspection_pose_timeout: float = inspection_pose_timeout
 
         self.status: Optional[Status] = None
 
@@ -51,8 +56,11 @@ class TakeImageHandler(TaskHandler):
         self.status = Status.Active
 
         current_pose: Pose = self._get_robot_pose()
+        target: Position = self.transform.transform_position(
+            position=task.target, to_=Frame.Robot
+        )
         inspection_pose: Pose = get_inspection_pose(
-            current_pose=current_pose, target=task.target
+            current_pose=current_pose, target=target
         )
 
         pose_message: dict = encode_pose_message(pose=inspection_pose)
@@ -80,7 +88,9 @@ class TakeImageHandler(TaskHandler):
             self.status = Status.Failure
             return
 
-        pose: Pose = self._get_robot_pose()
+        pose: Pose = self.transform.transform_pose(
+            pose=self._get_robot_pose(), to_=Frame.Asset
+        )
         timestamp: datetime = datetime.utcnow()
         image_metadata: ImageMetadata = ImageMetadata(
             start_time=timestamp,
