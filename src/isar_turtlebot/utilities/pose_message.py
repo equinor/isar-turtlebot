@@ -1,3 +1,5 @@
+from typing import Dict
+
 from robot_interface.models.geometry.frame import Frame
 from robot_interface.models.geometry.orientation import Orientation
 from robot_interface.models.geometry.pose import Pose
