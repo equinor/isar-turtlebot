@@ -65,7 +65,7 @@ New models can be added by placing the model that is used by Gazebo into '/model
 
 ### Running custom model
 
-To run the simulation with the custom model, set `WORLD_NAME=new_world` in 'docker_scripts/entrypoint.sh'.
+To run the simulation with the custom model, set `WORLD_NAME=new_world` in `docker_scripts/entrypoint.sh`.
 
 ## Simulation without docker
 
@@ -153,18 +153,18 @@ If the example map are used, you can try the example mission number `2`.
 The turtlebot can be equipped with a [manipulator](https://emanual.robotis.com/docs/en/platform/turtlebot3/manipulation/#manipulation) which also can be included in the simulations. Additional software must be installed for the manipulator simulation.
 
 ```bash
-$ cd ~/catkin_ws/src/
-$ git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation.git
-$ git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation_simulations.git
-$ git clone https://github.com/ROBOTIS-GIT/open_manipulator_dependencies.git
-$ cd ~/catkin_ws && catkin_make
+cd ~/catkin_ws/src/ &&
+git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation.git &&
+git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation_simulations.git &&
+git clone https://github.com/ROBOTIS-GIT/open_manipulator_dependencies.git &&
+cd ~/catkin_ws && catkin_make
 ```
 
 The manipulator can be controlled using rviz or a simpler GUI which is enabled by setting the roslaunch argument
-`manipulator_gui` to `"rviz"` or `"simple"` respectively. With the latter as default value. There is no constraints for running both controllers simultaneously but such functionality is not implemented. Running simulation with manipulator can be done by the roslaunch command with the preqruisite of having isar-turtlebot installed as a ros package.
+`manipulator_gui` to `"rviz"` or `"simple"` respectively. With the latter as default value. There is no constraints for running both controllers simultaneously, but such functionality is not implemented. Running simulation with manipulator can be done by the roslaunch command with the preqruisite of having isar-turtlebot installed as a ros package.
 
 ```bash
-$ roslaunch isar-turtlebot turtlebot_manipulator.launch open_manipulator_gui:=true
+roslaunch isar-turtlebot turtlebot_manipulator.launch open_manipulator_gui:=true
 ```
 
 Alternatively the simulation with manipulator can also run in docker by including the parameter `ENABLE_MANIPULATOR` and the controller GUI set according to the description above:
@@ -173,7 +173,7 @@ Alternatively the simulation with manipulator can also run in docker by includin
 sudo ENABLE_MANIPULATOR=true MANIPULATOR_GUI="rviz" docker-compose up --build
 ```
 
-The simulation can also run in docker as described in the section for [docker](#run-simulation)
+The simulation can also run in docker as described in the section for [docker](#run-simulation).
 
 ## Teleoperation
 
@@ -181,7 +181,7 @@ The turtlebot base can be controlled manually by publishing to the ros topic `/c
 
 ### Keyboard
 
-With the simulation running open a new terminal. If running in docker, access the docker container with:
+With the simulation running, open a new terminal. If running in docker, access the docker container with:
 
 ```bash
 sudo docker exec -it isar_turtlebot bash
@@ -201,7 +201,19 @@ rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 
 ### Joystick
 
-Teleoperating with a joystick requires an additional package, [joy](https://wiki.ros.org/joy), for reading the joystick input and publishing it to a topic. This package should be compatible with any joystick supported by Linux. After you connected the joystick it should be found as an input decvice "/dev/input/jsX", where X is the unique id-number of the joystick (default "js0"). To verify if the joystick is setup correctly find the unique id-number with `$ ls /dev/input/` and run `$ jstest /dev/input/jsX`.
+Teleoperating with a joystick requires an additional package, [joy](https://wiki.ros.org/joy), for reading the joystick input and publishing it to a topic. This package should be compatible with any joystick supported by Linux. After you connected the joystick it should be found as an input decvice `/dev/input/jsX`, where X is the unique id-number of the joystick (default `js0`).
+
+To verify if the joystick is setup correctly, find the unique id-number with
+
+```
+ls /dev/input/
+```
+
+and run
+
+```
+jstest /dev/input/jsX.
+```
 
 To enable teleoperation with a joystick while running in docker the joystick must be added as a device in `docker-compose.yaml` under `services`,`noetic`.
 
@@ -213,7 +225,7 @@ To enable teleoperation with a joystick while running in docker the joystick mus
 Spin up the docker container with the controller specified (currently `'xbox'` is the only supported controller):
 
 ```bash
-sudo CONTROLLER='xbox' docker-compose up --build
+sudo TELEOP_CONTROLLER='xbox' docker-compose up --build
 ```
 
 To enable teleoperation while running locally, first install the two packages:
@@ -222,7 +234,7 @@ To enable teleoperation while running locally, first install the two packages:
 sudo apt-get install ros-noetic-joy  ros-noetic-teleop-twist-joy
 ```
 
-Open two new terminals and start up "joy_node" and "teleop_node". To control the turtlebot hold in `enable_button` and use the joystick. See documention for [teleop_twist_joy](https://wiki.ros.org/teleop_twist_joy) for more information.
+Enable teleoperation by opening two new terminals and start up `joy_node` and `teleop_node`:
 
 ```bash
 rosrun joy joy_node
@@ -231,6 +243,7 @@ rosrun joy joy_node
 ```bash
 rosrun teleop_twist_joy teleop_node
 ```
+To control the turtlebot, hold in `enable_button` and use the joystick. See documention for [teleop_twist_joy](https://wiki.ros.org/teleop_twist_joy) for more information.
 
 ## Development
 
@@ -245,3 +258,5 @@ pip install -e ".[dev]"
 ## Contributing
 
 We welcome all kinds of contributions, including code, bug reports, issues, feature requests, and documentation. The preferred way of submitting a contribution is to either make an issue on github or by forking the project on github and making a pull requests.
+
+We write our commit messages according to [this guide](https://cbea.ms/git-commit/).
