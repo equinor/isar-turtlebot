@@ -15,7 +15,5 @@ services:
       - MANIPULATOR_GUI=${MANIPULATOR_GUI:-disabled}
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-    devices:
-      - /dev/input/js0
     runtime: nvidia
     tty: true

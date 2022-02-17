@@ -201,14 +201,28 @@ rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 
 ### Joystick
 
-Teleoperating with a joystick requires an additional package, [joy](https://wiki.ros.org/joy), for reading the joystick input and publishing it to a topic. This package should be compatible with any joystick supported by Linux. Currently this is only working when running simulation locally and does not work when running the simulation in docker.
+Teleoperating with a joystick requires an additional package, [joy](https://wiki.ros.org/joy), for reading the joystick input and publishing it to a topic. This package should be compatible with any joystick supported by Linux. After you connected the joystick it should be found as an input decvice "/dev/input/jsX", where X is the unique id-number of the joystick (default "js0"). To verify if the joystick is setup correctly find the unique id-number with `$ ls /dev/input/` and run `$ jstest /dev/input/jsX`.
+
+To enable teleoperation with a joystick while running in docker the joystick must be added as a device in `docker-compose.yaml` under `services`,`noetic`.
+
+```bash
+    devices:
+    - dev/input/jsX
+```
+
+Spin up the docker container with the controller specified (currently `'xbox'` is the only supported controller):
+
+```bash
+sudo CONTROLLER='xbox' docker-compose up --build
+```
+
+To enable teleoperation while running locally, first install the two packages:
 
 ```bash
 sudo apt-get install ros-noetic-joy  ros-noetic-teleop-twist-joy
 ```
 
-After you connected the joystick it should be found as an input decvice "/dev/input/jsX", where X is the unique id-number of the joystick (default "js0").
-To verify if the joystick is setup correctly find the unique id-number with `$ ls /dev/input/` and run `$ jstest /dev/input/jsX`. Enable teleoperation by opening two new terminals and start up "joy_node" and "teleop_node". To control the turtlebot hold in `enable_button` and use the joystick. See documention for [teleop_twist_joy](https://wiki.ros.org/teleop_twist_joy) for more information.
+Open two new terminals and start up "joy_node" and "teleop_node". To control the turtlebot hold in `enable_button` and use the joystick. See documention for [teleop_twist_joy](https://wiki.ros.org/teleop_twist_joy) for more information.
 
 ```bash
 rosrun joy joy_node
