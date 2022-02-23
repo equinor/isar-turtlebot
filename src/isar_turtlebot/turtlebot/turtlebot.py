@@ -45,7 +45,10 @@ class Turtlebot:
 
     def publish_task(self, task: Task) -> None:
         self.task_handler = self.task_handlers[type(task).__name__]
-        self.task_handler.start(task)
+        try:
+            self.task_handler.start(task)
+        except TimeoutError as e:
+            raise RobotCommunicationException from e
 
         if isinstance(task, InspectionTask):
             self.filenames[task.id] = self.task_handler.get_filename()
@@ -59,14 +62,14 @@ class Turtlebot:
     def get_inspections(self, id: UUID) -> Sequence[Inspection]:
         try:
             inspection: Inspection = self.inspections[id]
-        except KeyError:
+        except KeyError as e:
             self.logger.warning(f"No inspection connected to task: {id}!")
-            raise RobotException
+            raise RobotException from e
         try:
             inspection.data = self._read_data(id)
-        except FileNotFoundError:
+        except FileNotFoundError as e:
             self.logger.warning(f"No data file connected to task: {id}!")
-            raise RobotException
+            raise RobotException from e
         return [inspection]
 
     def _read_data(self, inspection_id: UUID) -> bytes:
