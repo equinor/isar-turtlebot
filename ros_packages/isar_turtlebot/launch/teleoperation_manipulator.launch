@@ -1,0 +1,16 @@
+<launch>
+    <arg name="teleop_controller" default='disabled'/>
+    <arg name="dev" default="/dev/input/js0" />
+    <group if="$(eval arg('teleop_controller')=='xbox')">
+        <node pkg="joy" type="joy_node" name="joy">
+            <param name="dev" value="$(arg dev)" />
+            <param name="deadzone" value="0.2" />
+            <param name="autorepeat_rate" value="40" />
+            <param name="coalesce_interval" value="0.025" />
+        </node>
+
+        <node pkg="moveit_ros_visualization" type="moveit_joy.py" output="screen" name="moveit_joy"/>
+    </group>
+
+</launch>
+

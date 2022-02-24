@@ -24,10 +24,11 @@ if [ "$ENABLE_MANIPULATOR" = true ]
 then
   if [ "$HEADLESS" = true ]
   then
-    xvfb-run --auto-servernum --server-num=1 roslaunch isar_turtlebot turtlebot_manipulator.launch world_name:=$WORLD_NAME initial_pose_x:=$INITIAL_POSE_X initial_pose_y:=$INITIAL_POSE_Y x_pos:=$X_POS y_pos:=$Y_POS z_pos:=$Z_POS manipulator_gui:=$MANIPULATOR_GUI gui:=false headless:=true open_rviz:=false
+    xvfb-run --auto-servernum --server-num=1 roslaunch isar_turtlebot turtlebot_manipulator.launch world_name:=$WORLD_NAME teleop_controller:=$TELEOP_CONTROLLER initial_pose_x:=$INITIAL_POSE_X initial_pose_y:=$INITIAL_POSE_Y x_pos:=$X_POS y_pos:=$Y_POS z_pos:=$Z_POS manipulator_gui:=$MANIPULATOR_GUI gui:=false headless:=true open_rviz:=false
   else
-    roslaunch isar_turtlebot turtlebot_manipulator.launch world_name:=$WORLD_NAME initial_pose_x:=$INITIAL_POSE_X initial_pose_y:=$INITIAL_POSE_Y x_pos:=$X_POS y_pos:=$Y_POS z_pos:=$Z_POS manipulator_gui:=$MANIPULATOR_GUI
+    roslaunch isar_turtlebot turtlebot_manipulator.launch world_name:=$WORLD_NAME teleop_controller:=$TELEOP_CONTROLLER initial_pose_x:=$INITIAL_POSE_X initial_pose_y:=$INITIAL_POSE_Y x_pos:=$X_POS y_pos:=$Y_POS z_pos:=$Z_POS manipulator_gui:=$MANIPULATOR_GUI
   fi
+
 else
   if [ "$HEADLESS" = true ]
   then
