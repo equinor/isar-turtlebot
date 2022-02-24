@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="turtlebot3_manipulation" xmlns:xacro="http://www.ros.org/wiki/xacro" >
+    <xacro:include filename="$(find isar_turtlebot_moveit_config)/config/arm.xacro" />
+    <xacro:arm name="arm" tip_link="link5"/>
+
+    <xacro:arg name="gripper" default="true" />
+
+    <!--Add the hand if people request it-->
+    <xacro:if value="$(arg gripper)">
+        <xacro:include filename="$(find isar_turtlebot_moveit_config)/config/gripper.xacro" />
+        <xacro:gripper />
+        <end_effector name="gripper" parent_link="link5" group="gripper" parent_group="arm" />
+
+    </xacro:if>
+
+</robot>
