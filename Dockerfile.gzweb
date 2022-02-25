@@ -1,0 +1,35 @@
+FROM osrf/ros:noetic-desktop-full
+
+WORKDIR /home/
+
+RUN apt-get update &&\
+    apt-get install -y\
+    gazebo11 \
+    build-essential \
+    git
+
+RUN apt-get install -y \
+    libgazebo11-dev\
+    libjansson-dev\
+    libboost-dev\
+    imagemagick\
+    libtinyxml-dev\
+    mercurial \
+    cmake \
+    build-essential
+
+RUN apt-get install -y curl
+
+COPY gzweb_dep.sh .
+RUN ./gzweb_dep.sh
+
+# GzWeb
+RUN cd ~; git clone https://github.com/osrf/gzweb
+WORKDIR /root/gzweb
+RUN git checkout gzweb_1.4.1
+
+COPY more_gzweb.sh .
+RUN ./more_gzweb.sh
+
+COPY gzweb_entry.sh .
+ENTRYPOINT ["./gzweb_entry.sh"]

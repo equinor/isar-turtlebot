@@ -245,3 +245,23 @@ pip install -e ".[dev]"
 ## Contributing
 
 We welcome all kinds of contributions, including code, bug reports, issues, feature requests, and documentation. The preferred way of submitting a contribution is to either make an issue on github or by forking the project on github and making a pull requests.
+
+## Run gzserver and gzweb in docker
+
+Build an image
+
+```
+docker build -f Dockerfile.gzweb .
+```
+
+Build and run a container
+
+```
+docker run --rm -it $(docker build -q -f Dockerfile.gzweb .)
+```
+
+Run everything
+
+```
+docker-compose up --build --remove-orphans
+```
