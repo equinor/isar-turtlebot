@@ -4,8 +4,8 @@ from logging import Logger
 
 from roslibpy import Ros
 
-from isar_turtlebot.config import config
 from isar_turtlebot.ros_bridge.topic import ImageTopic, Topic
+from isar_turtlebot.settings import settings
 
 
 class RosBridgeInterface(ABC):
@@ -15,8 +15,8 @@ class RosBridgeInterface(ABC):
 class RosBridge(RosBridgeInterface):
     def __init__(
         self,
-        host: str = config.get("ros_bridge", "host"),
-        port: int = config.getint("ros_bridge", "port"),
+        host: str = settings.ROS_BRIDGE_HOST,
+        port: int = settings.ROS_BRIDGE_PORT,
     ):
         self.logger: Logger = logging.getLogger("state_machine")
 

@@ -19,9 +19,9 @@ from robot_interface.models.inspection.inspection import (
 )
 from robot_interface.models.mission.task import TakeThermalImage
 
-from isar_turtlebot.config import config
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
+from isar_turtlebot.settings import settings
 from isar_turtlebot.turtlebot.taskhandlers.taskhandler import TaskHandler
 from isar_turtlebot.utilities.inspection_pose import get_inspection_pose
 from isar_turtlebot.utilities.pose_message import (
@@ -35,12 +35,10 @@ class TakeThermalImageHandler(TaskHandler):
         self,
         bridge: RosBridge,
         transform: Transformation,
-        storage_folder: Path = Path(config.get("storage", "storage_folder")),
-        thermal_image_filetype: str = config.get("metadata", "thermal_image_filetype"),
-        publishing_timeout: float = config.getfloat("mission", "publishing_timeout"),
-        inspection_pose_timeout: float = config.getfloat(
-            "mission", "inspection_pose_timeout"
-        ),
+        storage_folder: Path = Path(settings.STORAGE_FOLDER),
+        thermal_image_filetype: str = settings.THERMAL_IMAGE_FILETYPE,
+        publishing_timeout: float = settings.PUBLISHING_TIMEOUT,
+        inspection_pose_timeout: float = settings.INSPECTION_POSE_TIMEOUT,
     ) -> None:
         self.bridge: RosBridge = bridge
         self.transform: Transformation = transform
@@ -100,7 +98,7 @@ class TakeThermalImageHandler(TaskHandler):
         image_metadata: ThermalImageMetadata = ThermalImageMetadata(
             start_time=timestamp,
             time_indexed_pose=TimeIndexedPose(pose=pose, time=timestamp),
-            file_type=config.get("metadata", "thermal_image_filetype"),
+            file_type=settings.THERMAL_IMAGE_FILETYPE,
         )
 
         self.inspection: ThermalImage = ThermalImage(metadata=image_metadata)

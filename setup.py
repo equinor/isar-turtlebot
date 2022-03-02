@@ -11,9 +11,7 @@ setup(
     url="https://github.com/equinor/isar-turtlebot",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
-    package_data={
-        "isar_turtlebot": ["config/default.ini", "config/maps/turtleworld.json"]
-    },
+    package_data={"isar_turtlebot": ["settings/maps/turtleworld.json"]},
     classifiers=[
         "Environment :: Other Environment",
         "Intended Audience :: Developers",
@@ -25,7 +23,7 @@ setup(
     ],
     include_package_data=True,
     setup_requires=["wheel"],
-    install_requires=["roslibpy", "numpy", "scipy", "Pillow", "alitra"],
+    install_requires=["roslibpy", "numpy", "scipy", "Pillow", "alitra", "pydantic"],
     extras_require={"dev": ["pytest", "black"]},
     python_requires=">=3.9",
     tests_require=["pytest"],

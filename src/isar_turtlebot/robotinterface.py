@@ -17,7 +17,7 @@ class Robot(RobotInterface):
         map_config: MapConfig = load_map_config(
             Path(
                 os.path.dirname(os.path.realpath(__file__)),
-                "config/maps/turtleworld.json",
+                "settings/maps/turtleworld.json",
             )
         )
         transform: Transformation = Transformation(map_config=map_config)
