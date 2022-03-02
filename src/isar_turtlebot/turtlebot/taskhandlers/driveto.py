@@ -6,9 +6,9 @@ from robot_interface.models.geometry.frame import Frame
 from robot_interface.models.geometry.pose import Pose
 from robot_interface.models.mission.task import DriveToPose
 
-from isar_turtlebot.config import config
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
+from isar_turtlebot.settings import settings
 from isar_turtlebot.turtlebot.taskhandlers.taskhandler import TaskHandler
 from isar_turtlebot.utilities.pose_message import encode_pose_message
 
@@ -18,7 +18,7 @@ class DriveToHandler(TaskHandler):
         self,
         bridge: RosBridge,
         transform: Transformation,
-        publishing_timeout: float = config.getfloat("mission", "publishing_timeout"),
+        publishing_timeout: float = settings.PUBLISHING_TIMEOUT,
     ) -> None:
         self.bridge: RosBridge = bridge
         self.transform: Transformation = transform

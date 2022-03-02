@@ -6,7 +6,7 @@ from typing import Any, Optional
 
 from roslibpy import Message, Ros, Topic as RosTopic
 
-from isar_turtlebot.config import config
+from isar_turtlebot.settings import settings
 
 
 class TopicInterface(ABC):
@@ -79,7 +79,7 @@ class ImageTopic(ImageTopicInterface):
         queue_size: int = 100,
         queue_length: int = 0,
         log_callbacks: bool = False,
-        get_image_timeout: float = config.getfloat("mission", "get_image_timeout"),
+        get_image_timeout: float = settings.GET_IMAGE_TIMEOUT,
     ) -> None:
         self.name: str = name
         self.topic: RosTopic = RosTopic(
