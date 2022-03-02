@@ -1,19 +1,26 @@
 version: "2.3"
 services:
-  noetic:
-    image: turtle_sim:latest
-    container_name: turtle_sim
+  ignition:
+    image: ignition
     build:
       context: ./
-      dockerfile: Dockerfile
-    ports:
-      - "9090:9090"
-    environment:
-      - DISPLAY=${DISPLAY}
-      - TELEOP_CONTROLLER=${TELEOP_CONTROLLER:-disabled}
-      - ENABLE_MANIPULATOR=${ENABLE_MANIPULATOR:-false}
-      - MANIPULATOR_GUI=${MANIPULATOR_GUI:-disabled}
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
-    runtime: nvidia
+      dockerfile: Dockerfile.ignition
+  ignition_headless:
+    depends_on:
+      - ignition
+    build:
+      context: ./
+      dockerfile: Dockerfile.ignition_headless
     tty: true
+    # ports:
+    #   - "9002"
+  ignition_web:
+    depends_on:
+      - ignition
+      - ignition_headless
+    build:
+      context: ./
+      dockerfile: Dockerfile.ignition_web
+    tty: true
+    ports:
+      - "9002:9002"

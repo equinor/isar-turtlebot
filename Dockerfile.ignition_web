@@ -1,0 +1,7 @@
+FROM ignition
+
+WORKDIR /home/
+
+COPY websocket.ign .
+
+CMD ign launch -v 4 websocket.ign
