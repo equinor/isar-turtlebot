@@ -1,5 +1,8 @@
 <?xml version='1.0'?>
 <ignition version='1.0'>
+<executable name='gazebo-server'>
+    <command>ign gazebo -v 4 -s shapes.sdf</command>
+</executable>
 <plugin name='ignition::launch::WebsocketServer'
     filename='ignition-launch-websocket-server'>
 <port>9002</port>

@@ -12,15 +12,5 @@ services:
       context: ./
       dockerfile: Dockerfile.ignition_headless
     tty: true
-    # ports:
-    #   - "9002"
-  ignition_web:
-    depends_on:
-      - ignition
-      - ignition_headless
-    build:
-      context: ./
-      dockerfile: Dockerfile.ignition_web
-    tty: true
     ports:
       - "9002:9002"
