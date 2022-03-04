@@ -3,5 +3,6 @@ FROM ignition
 WORKDIR /home/
 
 COPY simulation.ign .
+COPY my_shapes.sdf .
 
 CMD ign launch -v 4 simulation.ign
