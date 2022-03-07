@@ -2,7 +2,25 @@ FROM ignition
 
 WORKDIR /home/
 
+RUN echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" \
+    > /etc/apt/sources.list.d/ros-latest.list
+RUN apt install curl
+RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
+RUN apt update
+RUN apt install ros-melodic-desktop-full
+RUN echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+RUN source ~/.bashrc
+RUN apt install python-rosdep python-rosinstall python-rosinstall-generator \
+    python-wstool build-essential
+RUN rosdep init
+RUN rosdep update
+
 COPY simulation.ign .
 COPY my_shapes.sdf .
+
+COPY ros_bridge.sh .
+RUN chmod +x ros_bridge.sh
+
+RUN ./ros_bridge.sh
 
 CMD ign launch -v 4 simulation.ign

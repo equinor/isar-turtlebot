@@ -6,6 +6,7 @@ services:
       context: ./
       dockerfile: Dockerfile.ignition
   ignition_headless:
+    container_name: ignition_headless
     depends_on:
       - ignition
     build:
