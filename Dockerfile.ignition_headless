@@ -2,25 +2,49 @@ FROM ignition
 
 WORKDIR /home/
 
+RUN apt-get update && apt-get install -y \
+    curl
+
 RUN echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" \
     > /etc/apt/sources.list.d/ros-latest.list
-RUN apt install curl
 RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
-RUN apt update
-RUN apt install ros-melodic-desktop-full
-RUN echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
-RUN source ~/.bashrc
-RUN apt install python-rosdep python-rosinstall python-rosinstall-generator \
-    python-wstool build-essential
+RUN apt-get update && apt-get install -y \
+    ros-noetic-desktop-full
+RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+
+# Install rosdep
+RUN apt-get install -y \
+    python3-rosdep \
+    python3-rosinstall \
+    python3-rosinstall-generator \
+    python3-wstool \
+    build-essential
 RUN rosdep init
 RUN rosdep update
 
+# Install ros ign bridge
+ENV IGNITION_VERSION fortress
+
+RUN mkdir -p /home/ws/src
+WORKDIR /home/ws/src
+RUN git clone https://github.com/osrf/ros_ign.git -b noetic
+
+WORKDIR /home/ws
+RUN rosdep install -r --from-paths src -i -y --rosdistro noetic
+
+RUN bash -c "source /opt/ros/noetic/setup.bash && catkin_make install"
+RUN echo "source /home/ws/devel/setup.bash" >> ~/.bashrc
+
+WORKDIR /home
 COPY simulation.ign .
 COPY my_shapes.sdf .
 
-COPY ros_bridge.sh .
-RUN chmod +x ros_bridge.sh
+# COPY ros_bridge.sh .
+# RUN chmod +x ros_bridge.sh
+# RUN ./ros_bridge.sh
 
-RUN ./ros_bridge.sh
-
-CMD ign launch -v 4 simulation.ign
+CMD 
+ign launch -v 4 simulation.ign
+roscore
+rosrun ros_ign_bridge parameter_bridge /world/car_world/pose/info@geometry_msgs/PoseArray@ignition.msgs.Pose_V
+webviz
