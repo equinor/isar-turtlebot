@@ -39,12 +39,6 @@ WORKDIR /home
 COPY simulation.ign .
 COPY my_shapes.sdf .
 
-# COPY ros_bridge.sh .
-# RUN chmod +x ros_bridge.sh
-# RUN ./ros_bridge.sh
-
-CMD 
-ign launch -v 4 simulation.ign
-roscore
-rosrun ros_ign_bridge parameter_bridge /world/car_world/pose/info@geometry_msgs/PoseArray@ignition.msgs.Pose_V
-webviz
+COPY ignition_entrypoint.sh .
+RUN chmod +x ignition_entrypoint.sh
+CMD ./ignition_entrypoint.sh
