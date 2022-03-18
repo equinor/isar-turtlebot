@@ -13,6 +13,7 @@ services:
       - TELEOP_CONTROLLER=${TELEOP_CONTROLLER:-disabled}
       - ENABLE_MANIPULATOR=${ENABLE_MANIPULATOR:-false}
       - MANIPULATOR_GUI=${MANIPULATOR_GUI:-disabled}
+      - HEADLESS=${HEADLESS:-false}
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
     runtime: nvidia

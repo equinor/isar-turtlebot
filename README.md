@@ -59,6 +59,13 @@ docker-compose up --build
 
 The simulation world that is used can be set by changing the world variable in the 'entrypoint.sh' file.
 
+To run the simulation in headless mode set the environment variable HEADLESS prior to launching the docker container.
+```bash
+export HEADLESS=true
+```
+
+The simulation can then be viewed at webviz with the following link: https://webviz.io/app/?rosbridge-websocket-url=ws://localhost:9090/
+
 ## Adding new models
 
 New models can be added by placing the model that is used by Gazebo into '/models/new_world/' and adding a "new_world.world" file into 'ros_packages/isar_turtlebot/worlds/'. The map that is used by the planner should be placed into '/ros_packages/isar_turtlebot/maps/' with the name 'new_world.\*'. To add a default configuration for the initial pose and position of the robot in the simulation, add '/config/new_world.cfg' with the desired parameters.
