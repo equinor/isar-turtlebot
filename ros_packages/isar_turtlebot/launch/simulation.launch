@@ -7,7 +7,10 @@
   <arg name="y_pos" default="1.0" />
   <arg name="z_pos" default="0.0" />
 
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
 
+  <arg name="open_rviz" default="true"/>
 
   <!-- Gazebo -->
   <include file="$(find isar_turtlebot)/launch/gazebo_turtlebot.launch">
@@ -15,6 +18,8 @@
     <arg name="x_pos" value="$(arg x_pos)"/>
     <arg name="y_pos" value="$(arg y_pos)"/>
     <arg name="z_pos" value="$(arg z_pos)"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="headless" value="$(arg headless)"/>
   </include>
 
   <!-- Rosbridge -->
@@ -26,6 +31,7 @@
       <arg name="map_file" value="$(find isar_turtlebot)/maps/$(arg world_name).yaml"/>
       <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
       <arg name="initial_pose_y" default="$(arg initial_pose_y)"/>
+      <arg name="open_rviz" default="$(arg open_rviz)"/>
     </include>
   </group>
 

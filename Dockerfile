@@ -28,7 +28,8 @@ RUN apt-get update &&\
     python3-catkin-tools \
     python3-rosdep \
     libignition-rendering3 \
-    git
+    git \
+    xvfb
 
 
 RUN mkdir -p catkin_ws/src 
