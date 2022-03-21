@@ -25,6 +25,6 @@ setup(
     setup_requires=["wheel"],
     install_requires=["roslibpy", "numpy", "scipy", "Pillow", "alitra", "pydantic"],
     extras_require={"dev": ["pytest", "black"]},
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     tests_require=["pytest"],
 )
