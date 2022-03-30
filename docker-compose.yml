@@ -16,10 +16,9 @@ services:
       - HEADLESS=${HEADLESS:-false}
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-    runtime: nvidia
     tty: true
     networks:
       - turtlenet
 networks:
-    turtlenet:
-      name: turtlenet
+  turtlenet:
+    name: turtlenet

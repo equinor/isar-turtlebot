@@ -10,14 +10,6 @@ ENV ENABLE_MANIPULATOR=${ENABLE_MANIPULATOR}
 ARG OPEN_MANIPULATOR_GUI
 ENV MANIPULATOR_GUI=${MANIPULATOR_GUI}
 
-
-
-# nvidia-container-runtime
-ENV NVIDIA_VISIBLE_DEVICES \
-    ${NVIDIA_VISIBLE_DEVICES:-all}
-ENV NVIDIA_DRIVER_CAPABILITIES \
-    ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
-
 WORKDIR /home/
 
 RUN apt-get update &&\
@@ -40,8 +32,6 @@ RUN git clone -b noetic-devel https://github.com/ROBOTIS-GIT/turtlebot3_simulati
     git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation.git &&\
     git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation_simulations.git &&\
     git clone https://github.com/ROBOTIS-GIT/open_manipulator_dependencies.git
-
-
 
 
 COPY ./ros_packages/ /home/catkin_ws/src/
