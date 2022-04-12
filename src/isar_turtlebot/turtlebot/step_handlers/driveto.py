@@ -40,6 +40,7 @@ class DriveToHandler(StepHandler):
             time.sleep(0.1)
             if (time.time() - start_time) > self.publishing_timeout:
                 raise TimeoutError("Publishing navigation message timed out")
+        self.goal_id = self._goal_id()
 
     def _goal_id(self) -> Optional[str]:
         message = self.bridge.step_status.get_value()

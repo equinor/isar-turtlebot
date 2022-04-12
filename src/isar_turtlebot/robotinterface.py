@@ -32,7 +32,7 @@ class Robot(RobotInterface):
         return self.turtlebot.get_step_status()
 
     def stop(self) -> bool:
-        return True
+        return self.turtlebot.cancel_step()
 
     def get_inspections(self, step: InspectionStep) -> Sequence[Inspection]:
         return self.turtlebot.get_inspections(step.id)

@@ -45,6 +45,9 @@ class Turtlebot:
         self.filenames: dict = dict()
         self.inspections: dict = dict()
 
+    def cancel_step(self) -> None:
+        self.bridge.cancel_step.publish(message={})
+
     def publish_step(self, step: Step) -> None:
         self.step_handler = self.step_handlers[type(step).__name__]
         try:

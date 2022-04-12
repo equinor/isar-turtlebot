@@ -22,6 +22,11 @@ class RosBridge(RosBridgeInterface):
 
         self.client: Ros = self.connect_client(host=host, port=port)
 
+        self.cancel_step: Topic = Topic(
+            client=self.client,
+            name="/move_base/cancel",
+            message_type="actionlib_msgs/GoalID",
+        )
         self.execute_step: Topic = Topic(
             client=self.client,
             name="/move_base/goal",
