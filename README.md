@@ -59,9 +59,16 @@ docker-compose up --build
 
 The simulation world that is used can be set by changing the world variable in the 'entrypoint.sh' file.
 
-To run the simulation in headless mode set the environment variable HEADLESS prior to launching the docker container.
+Additional settings, such as using Nvidia GPU or gamepad input to the docker container is included via separate .yml-files. To run the docker container with these settings the corresponding `docker-compose-setting.yml` file must be spesified together with the main `docker-compose.yml` file. Several setting files can be included.
+
 ```bash
-export HEADLESS=true
+docker-compose -f docker-compose.yml -f docker-compose-setting.yml --build
+```
+
+To run the simulation in headless mode set the environment variable `HEADLESS=true` prior to launching the docker container. Alternatively directly as an environment variable in the docker-compose command:
+
+```bash
+HEADLESS=true docker-compose up --build
 ```
 
 The simulation can then be viewed at webviz with the following link: https://webviz.io/app/?rosbridge-websocket-url=ws://localhost:9090/
@@ -155,33 +162,6 @@ Missions can be posted to the robot through [ISAR](https://github.com/equinor/is
 
 If the example map are used, you can try the example mission number `2`.
 
-## Simulation with manipulator
-
-The turtlebot can be equipped with a [manipulator](https://emanual.robotis.com/docs/en/platform/turtlebot3/manipulation/#manipulation) which also can be included in the simulations. Additional software must be installed for the manipulator simulation.
-
-```bash
-cd ~/catkin_ws/src/ &&
-git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation.git &&
-git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation_simulations.git &&
-git clone https://github.com/ROBOTIS-GIT/open_manipulator_dependencies.git &&
-cd ~/catkin_ws && catkin_make
-```
-
-The manipulator can be controlled using rviz or a simpler GUI which is enabled by setting the roslaunch argument
-`manipulator_gui` to `"rviz"` or `"simple"` respectively. With the latter as default value. There is no constraints for running both controllers simultaneously, but such functionality is not implemented. Running simulation with manipulator can be done by the roslaunch command with the preqruisite of having isar-turtlebot installed as a ros package.
-
-```bash
-roslaunch isar-turtlebot turtlebot_manipulator.launch open_manipulator_gui:=true
-```
-
-Alternatively the simulation with manipulator can also run in docker by including the parameter `ENABLE_MANIPULATOR` and the controller GUI set according to the description above:
-
-```bash
-sudo ENABLE_MANIPULATOR=true MANIPULATOR_GUI="rviz" docker-compose up --build
-```
-
-The simulation can also run in docker as described in the section for [docker](#run-simulation).
-
 ## Teleoperation
 
 The turtlebot base can be controlled manually by publishing to the ros topic `/cmd_vel`. Using a keyboard, the ros package [teleop_twist_keyboard](https://wiki.ros.org/teleop_twist_keyboard) translates keyboard inputs to ros messages. Similarly, the ros package [teleop_twist_joy](https://wiki.ros.org/teleop_twist_joy) handles joystick messages.
@@ -191,7 +171,7 @@ The turtlebot base can be controlled manually by publishing to the ros topic `/c
 With the simulation running, open a new terminal. If running in docker, access the docker container with:
 
 ```bash
-sudo docker exec -it isar_turtlebot bash
+docker exec -it isar_turtlebot bash
 ```
 
 Install the teleoperation package (if running in docker this package must be installed every time):
@@ -222,17 +202,10 @@ and run
 jstest /dev/input/jsX.
 ```
 
-To enable teleoperation with a joystick while running in docker the joystick must be added as a device in `docker-compose.yaml` under `services`,`noetic`.
+To enable teleoperation with a joystick while running in docker the joystick must be added as a device in `docker-compose.yaml`. This is done by including the `docker-compose-gamepad.yaml` file as decribed in the docker section. Additionally the environment variable `TELEOP_CONTROLLER` must be specified(currently `"xbox"` is the only supported controller):
 
 ```bash
-    devices:
-    - dev/input/jsX
-```
-
-Spin up the docker container with the controller specified (currently `'xbox'` is the only supported controller):
-
-```bash
-sudo TELEOP_CONTROLLER='xbox' docker-compose up --build
+TELEOP_CONTROLLER="xbox" docker-compose -f docker-compose.yml -f docker-compose-gamepad.yml up --build
 ```
 
 To enable teleoperation while running locally, first install the two packages:
@@ -250,7 +223,51 @@ rosrun joy joy_node
 ```bash
 rosrun teleop_twist_joy teleop_node
 ```
+
 To control the turtlebot, hold in `enable_button` and use the joystick. See documention for [teleop_twist_joy](https://wiki.ros.org/teleop_twist_joy) for more information.
+
+## Simulation with manipulator
+
+The turtlebot can be equipped with a [manipulator](https://emanual.robotis.com/docs/en/platform/turtlebot3/manipulation/#manipulation) which also can be included in the simulations. Additional software must be installed for the manipulator simulation.
+
+```bash
+cd ~/catkin_ws/src/ &&
+git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation.git &&
+git clone https://github.com/ROBOTIS-GIT/turtlebot3_manipulation_simulations.git &&
+git clone https://github.com/ROBOTIS-GIT/open_manipulator_dependencies.git &&
+cd ~/catkin_ws && catkin_make
+```
+
+The manipulator can be controlled using rviz or a simpler GUI which is enabled by setting the roslaunch argument
+`MANIPULATOR_GUI` to `"rviz"` or `"simple"` respectively. With the latter as default value. There is no constraints for running both controllers simultaneously, but such functionality is not implemented. Running simulation with manipulator can be done by the roslaunch command with the prerequisite of having isar-turtlebot installed as a ros package.
+
+```bash
+roslaunch isar-turtlebot turtlebot_manipulator.launch open_manipulator_gui:=true
+```
+
+Alternatively the simulation with manipulator can also run in docker by including the parameter `ENABLE_MANIPULATOR` and the controller GUI set according to the description above:
+
+```bash
+sudo ENABLE_MANIPULATOR=true MANIPULATOR_GUI="rviz" docker-compose up --build
+```
+
+The simulation can also run in docker as described in the section for [docker](#run-simulation).
+
+### Manipulator teleoperation
+
+Teleoperating the manipulator during simulation is enabled with the roslaunch argument `TELEOP-CONTROLLER` specifying the controller (currently `'xbox'` is the only supported controller).
+
+```bash
+roslaunch isar_turtlebot turtlebot_manipulator.launch teleop_controller:="xbox"
+
+```
+
+To run simulation in docker with teleoperation of manipulator:
+
+```bash
+sudo ENABLE_MANIPULATOR=true MANIPULATOR_GUI="rviz" TELEOP_CONTROLLER="xbox" docker-compose -f docker-compose.yml -f docker-compose-setting.yml  up --build
+
+```
 
 ## Development
 
