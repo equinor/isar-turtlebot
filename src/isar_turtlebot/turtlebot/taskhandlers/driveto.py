@@ -2,15 +2,14 @@ import time
 from typing import Optional
 
 from isar.services.coordinates.transformation import Transformation
-from robot_interface.models.geometry.frame import Frame
-from robot_interface.models.geometry.pose import Pose
-from robot_interface.models.mission.task import DriveToPose
-
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
 from isar_turtlebot.settings import settings
 from isar_turtlebot.turtlebot.taskhandlers.taskhandler import TaskHandler
 from isar_turtlebot.utilities.pose_message import encode_pose_message
+from robot_interface.models.geometry.frame import Frame
+from robot_interface.models.geometry.pose import Pose
+from robot_interface.models.mission.task import DriveToPose
 
 
 class DriveToHandler(TaskHandler):
@@ -42,9 +41,11 @@ class DriveToHandler(TaskHandler):
                 raise TimeoutError("Publishing navigation message timed out")
 
     def _goal_id(self) -> Optional[str]:
-        goal_id: str = self.goal_id_from_message(
-            message=self.bridge.task_status.get_value()
-        )
+        message = self.bridge.task_status.get_value()
+        if not message:
+            return None
+
+        goal_id: str = self.goal_id_from_message(message=message)
         return goal_id
 
     def get_status(self) -> Status:
