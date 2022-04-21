@@ -6,19 +6,9 @@ from pathlib import Path
 from typing import Optional
 from uuid import uuid4
 
-import PIL.Image as PILImage
 import numpy as np
-from isar.services.coordinates.transformation import Transformation
-from robot_interface.models.geometry.frame import Frame
-from robot_interface.models.geometry.pose import Pose
-from robot_interface.models.geometry.position import Position
-from robot_interface.models.inspection.inspection import (
-    ThermalImage,
-    ThermalImageMetadata,
-    TimeIndexedPose,
-)
-from robot_interface.models.mission.task import TakeThermalImage
-
+import PIL.Image as PILImage
+from alitra import Pose, Position, Transform
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
 from isar_turtlebot.settings import settings
@@ -28,20 +18,26 @@ from isar_turtlebot.utilities.pose_message import (
     decode_pose_message,
     encode_pose_message,
 )
+from robot_interface.models.inspection.inspection import (
+    ThermalImage,
+    ThermalImageMetadata,
+    TimeIndexedPose,
+)
+from robot_interface.models.mission.task import TakeThermalImage
 
 
 class TakeThermalImageHandler(TaskHandler):
     def __init__(
         self,
         bridge: RosBridge,
-        transform: Transformation,
+        transform: Transform,
         storage_folder: Path = Path(settings.STORAGE_FOLDER),
         thermal_image_filetype: str = settings.THERMAL_IMAGE_FILETYPE,
         publishing_timeout: float = settings.PUBLISHING_TIMEOUT,
         inspection_pose_timeout: float = settings.INSPECTION_POSE_TIMEOUT,
     ) -> None:
         self.bridge: RosBridge = bridge
-        self.transform: Transformation = transform
+        self.transform: Transform = transform
         self.storage_folder: Path = storage_folder
         self.thermal_image_filetype: str = thermal_image_filetype
         self.publishing_timeout: float = publishing_timeout
@@ -60,7 +56,9 @@ class TakeThermalImageHandler(TaskHandler):
         self.status = Status.Active
         current_pose: Pose = self._get_robot_pose()
         target: Position = self.transform.transform_position(
-            position=task.target, to_=Frame.Robot
+            position=task.target,
+            from_=self.transform.from_,
+            to_=self.transform.to_,
         )
         inspection_pose: Pose = get_inspection_pose(
             current_pose=current_pose, target=target
@@ -92,7 +90,9 @@ class TakeThermalImageHandler(TaskHandler):
             return
 
         pose: Pose = self.transform.transform_pose(
-            pose=self._get_robot_pose(), to_=Frame.Asset
+            pose=self._get_robot_pose(),
+            from_=self.transform.from_,
+            to_=self.transform.to_,
         )
         timestamp: datetime = datetime.utcnow()
         image_metadata: ThermalImageMetadata = ThermalImageMetadata(

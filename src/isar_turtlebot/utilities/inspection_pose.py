@@ -1,8 +1,5 @@
 import numpy as np
-from robot_interface.models.geometry.frame import Frame
-from robot_interface.models.geometry.orientation import Orientation
-from robot_interface.models.geometry.pose import Pose
-from robot_interface.models.geometry.position import Position
+from alitra import Frame, Orientation, Pose, Position
 from scipy.spatial.transform import Rotation
 
 
@@ -18,10 +15,10 @@ def get_inspection_pose(current_pose: Pose, target: Position) -> Pose:
         y=quaternion[1],
         z=quaternion[2],
         w=quaternion[3],
-        frame=Frame.Robot,
+        frame=Frame("robot"),
     )
 
     pose = Pose(
-        position=current_pose.position, orientation=orientation, frame=Frame.Robot
+        position=current_pose.position, orientation=orientation, frame=Frame("robot")
     )
     return pose

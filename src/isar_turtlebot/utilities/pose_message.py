@@ -1,9 +1,6 @@
 from typing import Dict
 
-from robot_interface.models.geometry.frame import Frame
-from robot_interface.models.geometry.orientation import Orientation
-from robot_interface.models.geometry.pose import Pose
-from robot_interface.models.geometry.position import Position
+from alitra import Frame, Orientation, Pose, Position
 
 
 def encode_pose_message(pose: Pose) -> dict:
@@ -33,7 +30,7 @@ def encode_pose_message(pose: Pose) -> dict:
     }
 
 
-def decode_pose_message(pose_message: dict, frame: Frame = Frame.Robot) -> Pose:
+def decode_pose_message(pose_message: dict, frame: Frame = Frame("robot")) -> Pose:
     position_message: Dict = pose_message["pose"]["pose"]["position"]
     orientation_message: Dict = pose_message["pose"]["pose"]["orientation"]
 
