@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional, Sequence
 from uuid import UUID
 
-from isar.services.coordinates.transformation import Transformation
+from alitra import Transform
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge import RosBridge
 from isar_turtlebot.turtlebot.taskhandlers import (
@@ -25,11 +25,11 @@ from robot_interface.models.mission.task import InspectionTask, Task
 class Turtlebot:
     """Task manager for Turtlebot."""
 
-    def __init__(self, bridge: RosBridge, transform: Transformation) -> None:
+    def __init__(self, bridge: RosBridge, transform: Transform) -> None:
 
         self.logger: Logger = logging.getLogger("robot")
         self.bridge: RosBridge = bridge
-        self.transform: Transformation = transform
+        self.transform: Transform = transform
         self.status: Optional[Status] = None
 
         self.task_handlers = {

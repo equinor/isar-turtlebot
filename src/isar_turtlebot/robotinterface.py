@@ -2,8 +2,7 @@ import os
 from pathlib import Path
 from typing import Sequence
 
-from alitra import MapConfig, load_map_config
-from isar.services.coordinates.transformation import Transformation
+from alitra import MapAlignment, Transform, align_maps
 from robot_interface.models.inspection.inspection import Inspection
 from robot_interface.models.mission import InspectionTask, Task, TaskStatus
 from robot_interface.robot_interface import RobotInterface
@@ -14,13 +13,15 @@ from isar_turtlebot.turtlebot import Turtlebot
 
 class Robot(RobotInterface):
     def __init__(self, bridge: RosBridgeInterface = RosBridge):
-        map_config: MapConfig = load_map_config(
+        map_alignment: MapAlignment = MapAlignment.from_config(
             Path(
                 os.path.dirname(os.path.realpath(__file__)),
                 "settings/maps/turtleworld.json",
             )
         )
-        transform: Transformation = Transformation(map_config=map_config)
+        transform: Transform = align_maps(
+            map_alignment.map_from, map_alignment.map_to, rot_axes="z"
+        )
         self.turtlebot: Turtlebot = Turtlebot(bridge=bridge(), transform=transform)
 
     def initiate_task(self, task: Task) -> bool:

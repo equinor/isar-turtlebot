@@ -1,49 +1,77 @@
 {
-  "map_name": "turtleworld",
-  "robot_reference_points": {
-    "points": [
-      {
-        "x": 1.0,
-        "y": 0.0,
-        "z": 0.0,
-        "frame": "robot"
-      },
-      {
-        "x": 0.0,
-        "y": 1.0,
-        "z": 0.0,
-        "frame": "robot"
-      },
-      {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 1.0,
-        "frame": "robot"
+  "name": "turtleworld",
+  "map_from": {
+    "name": "turtleworld_robot",
+    "reference_positions": {
+      "positions": [
+        {
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.0,
+          "frame": {
+            "name": "robot"
+          }
+        },
+        {
+          "x": 0.0,
+          "y": 1.0,
+          "z": 0.0,
+          "frame": {
+            "name": "robot"
+          }
+        },
+        {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 1.0,
+          "frame": {
+            "name": "robot"
+          }
+        }
+      ],
+      "frame": {
+        "name": "robot"
       }
-    ],
-    "frame": "robot"
+    },
+    "frame": {
+      "name": "robot"
+    }
   },
-  "asset_reference_points": {
-    "points": [
-      {
-        "x": 1.0,
-        "y": 0.0,
-        "z": 0.0,
-        "frame": "asset"
-      },
-      {
-        "x": 0.0,
-        "y": 1.0,
-        "z": 0.0,
-        "frame": "asset"
-      },
-      {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 1.0,
-        "frame": "asset"
+  "map_to": {
+    "name": "turtleworld_asset",
+    "reference_positions": {
+      "positions": [
+        {
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.0,
+          "frame": {
+            "name": "asset"
+          }
+        },
+        {
+          "x": 0.0,
+          "y": 1.0,
+          "z": 0.0,
+          "frame": {
+            "name": "asset"
+          }
+        },
+        {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 1.0,
+          "frame": {
+            "name": "asset"
+          }
+        }
+      ],
+      "frame": {
+        "name": "asset"
       }
-    ],
-    "frame": "asset"
+    },
+    "frame": {
+      "name": "asset"
+    }
   }
 }

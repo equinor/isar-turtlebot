@@ -1,14 +1,12 @@
 import time
 from typing import Optional
 
-from isar.services.coordinates.transformation import Transformation
+from alitra import Frame, Pose, Transform
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
 from isar_turtlebot.settings import settings
 from isar_turtlebot.turtlebot.taskhandlers.taskhandler import TaskHandler
 from isar_turtlebot.utilities.pose_message import encode_pose_message
-from robot_interface.models.geometry.frame import Frame
-from robot_interface.models.geometry.pose import Pose
 from robot_interface.models.mission.task import DriveToPose
 
 
@@ -16,11 +14,11 @@ class DriveToHandler(TaskHandler):
     def __init__(
         self,
         bridge: RosBridge,
-        transform: Transformation,
+        transform: Transform,
         publishing_timeout: float = settings.PUBLISHING_TIMEOUT,
     ) -> None:
         self.bridge: RosBridge = bridge
-        self.transform: Transformation = transform
+        self.transform: Transform = transform
         self.publishing_timeout: float = publishing_timeout
 
     def start(
@@ -28,7 +26,9 @@ class DriveToHandler(TaskHandler):
         task: DriveToPose,
     ) -> None:
 
-        goal_pose: Pose = self.transform.transform_pose(pose=task.pose, to_=Frame.Robot)
+        goal_pose: Pose = self.transform.transform_pose(
+            pose=task.pose, from_=task.pose.frame, to_=Frame("robot")
+        )
         goal_id: Optional[str] = self._goal_id()
 
         pose_message: dict = encode_pose_message(pose=goal_pose)
