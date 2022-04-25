@@ -51,7 +51,7 @@ class TakeImageHandler(TaskHandler):
 
         current_pose: Pose = self._get_robot_pose()
         target: Position = self.transform.transform_position(
-            position=task.target,
+            positions=task.target,
             from_=self.transform.from_,
             to_=self.transform.to_,
         )
