@@ -22,3 +22,16 @@ def get_inspection_pose(current_pose: Pose, target: Position) -> Pose:
         position=current_pose.position, orientation=orientation, frame=Frame("robot")
     )
     return pose
+
+
+def get_distance(current_position: Position, target: Position) -> float:
+    current_position = np.array(current_position.to_array())
+    target = np.array(target.to_array())
+
+    distance = np.sqrt(
+        (current_position[0] - target[0]) ** 2
+        + (current_position[1] - target[1]) ** 2
+        + (current_position[2] - target[2]) ** 2
+    )
+
+    return distance

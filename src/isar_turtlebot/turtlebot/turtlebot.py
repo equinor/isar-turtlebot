@@ -1,6 +1,7 @@
 import logging
 from logging import Logger
 from pathlib import Path
+from threading import Thread
 from typing import Optional, Sequence
 from uuid import UUID
 
@@ -13,6 +14,7 @@ from robot_interface.models.inspection.inspection import Inspection
 from robot_interface.models.mission import InspectionStep, Step, StepStatus
 
 from isar_turtlebot.models.turtlebot_status import Status
+from isar_turtlebot.mqtt.mqtt_client import MqttClient
 from isar_turtlebot.ros_bridge import RosBridge
 from isar_turtlebot.turtlebot.step_handlers import (
     DriveToHandler,
@@ -44,6 +46,11 @@ class Turtlebot:
 
         self.filenames: dict = dict()
         self.inspections: dict = dict()
+
+        self.mqtt_client = MqttClient(bridge=self.bridge)
+
+        mqtt_thread = Thread(target=self.mqtt_client.publish, args=(), daemon=True)
+        mqtt_thread.start()
 
     def publish_step(self, step: Step) -> None:
         self.step_handler = self.step_handlers[type(step).__name__]
