@@ -62,7 +62,7 @@ The simulation world that is used can be set by changing the world variable in t
 Additional settings, such as using Nvidia GPU or gamepad input to the docker container is included via separate .yml-files. To run the docker container with these settings the corresponding `docker-compose-setting.yml` file must be spesified together with the main `docker-compose.yml` file. Several setting files can be included.
 
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose-setting.yml --build
+docker-compose -f docker-compose.yml -f docker-compose-setting.yml up --build
 ```
 
 To run the simulation in headless mode set the environment variable `HEADLESS=true` prior to launching the docker container. Alternatively directly as an environment variable in the docker-compose command:
