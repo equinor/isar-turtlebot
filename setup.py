@@ -11,7 +11,9 @@ setup(
     url="https://github.com/equinor/isar-turtlebot",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
-    package_data={"isar_turtlebot": ["settings/maps/turtleworld.json"]},
+    package_data={
+        "isar_turtlebot": ["settings/maps/turtleworld.json", "config/settings.env"]
+    },
     classifiers=[
         "Environment :: Other Environment",
         "Intended Audience :: Developers",
