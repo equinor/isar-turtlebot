@@ -6,27 +6,28 @@ from pathlib import Path
 from typing import Optional
 from uuid import uuid4
 
-import numpy as np
 import PIL.Image as PILImage
+import numpy as np
 from alitra import Pose, Position, Transform
-from isar_turtlebot.models.turtlebot_status import Status
-from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
-from isar_turtlebot.settings import settings
-from isar_turtlebot.turtlebot.taskhandlers.taskhandler import TaskHandler
-from isar_turtlebot.utilities.inspection_pose import get_inspection_pose
-from isar_turtlebot.utilities.pose_message import (
-    decode_pose_message,
-    encode_pose_message,
-)
 from robot_interface.models.inspection.inspection import (
     ThermalImage,
     ThermalImageMetadata,
     TimeIndexedPose,
 )
-from robot_interface.models.mission.task import TakeThermalImage
+from robot_interface.models.mission import TakeThermalImage
+
+from isar_turtlebot.models.turtlebot_status import Status
+from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
+from isar_turtlebot.settings import settings
+from isar_turtlebot.turtlebot.step_handlers.stephandler import StepHandler
+from isar_turtlebot.utilities.inspection_pose import get_inspection_pose
+from isar_turtlebot.utilities.pose_message import (
+    decode_pose_message,
+    encode_pose_message,
+)
 
 
-class TakeThermalImageHandler(TaskHandler):
+class TakeThermalImageHandler(StepHandler):
     def __init__(
         self,
         bridge: RosBridge,
@@ -50,13 +51,13 @@ class TakeThermalImageHandler(TaskHandler):
 
     def start(
         self,
-        task: TakeThermalImage,
+        step: TakeThermalImage,
     ) -> None:
 
         self.status = Status.Active
         current_pose: Pose = self._get_robot_pose()
         target: Position = self.transform.transform_position(
-            positions=task.target,
+            positions=step.target,
             from_=self.transform.from_,
             to_=self.transform.to_,
         )
@@ -66,7 +67,7 @@ class TakeThermalImageHandler(TaskHandler):
 
         pose_message: dict = encode_pose_message(pose=inspection_pose)
         goal_id: Optional[str] = self._goal_id()
-        self.bridge.execute_task.publish(message=pose_message)
+        self.bridge.execute_step.publish(message=pose_message)
 
         start_time: float = time.time()
         while self._goal_id() == goal_id:
@@ -120,13 +121,13 @@ class TakeThermalImageHandler(TaskHandler):
 
     def _goal_id(self) -> Optional[str]:
         goal_id: str = self.goal_id_from_message(
-            message=self.bridge.task_status.get_value()
+            message=self.bridge.step_status.get_value()
         )
         return goal_id
 
     def _move_status(self) -> Status:
         move_status: Status = self.status_from_message(
-            message=self.bridge.task_status.get_value()
+            message=self.bridge.step_status.get_value()
         )
         return move_status
 

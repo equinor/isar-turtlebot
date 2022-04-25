@@ -4,7 +4,7 @@ from typing import Sequence
 
 from alitra import MapAlignment, Transform, align_maps
 from robot_interface.models.inspection.inspection import Inspection
-from robot_interface.models.mission import InspectionTask, Task, TaskStatus
+from robot_interface.models.mission import InspectionStep, Step, StepStatus
 from robot_interface.robot_interface import RobotInterface
 
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge, RosBridgeInterface
@@ -24,15 +24,15 @@ class Robot(RobotInterface):
         )
         self.turtlebot: Turtlebot = Turtlebot(bridge=bridge(), transform=transform)
 
-    def initiate_task(self, task: Task) -> bool:
-        self.turtlebot.publish_task(task=task)
+    def initiate_step(self, step: Step) -> bool:
+        self.turtlebot.publish_step(step=step)
         return True
 
-    def task_status(self) -> TaskStatus:
-        return self.turtlebot.get_task_status()
+    def step_status(self) -> StepStatus:
+        return self.turtlebot.get_step_status()
 
     def stop(self) -> bool:
         return True
 
-    def get_inspections(self, task: InspectionTask) -> Sequence[Inspection]:
-        return self.turtlebot.get_inspections(task.id)
+    def get_inspections(self, step: InspectionStep) -> Sequence[Inspection]:
+        return self.turtlebot.get_inspections(step.id)

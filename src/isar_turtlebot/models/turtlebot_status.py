@@ -1,6 +1,6 @@
 from enum import Enum
 
-from robot_interface.models.mission import TaskStatus
+from robot_interface.models.mission import StepStatus
 
 
 class Status(str, Enum):
@@ -10,12 +10,12 @@ class Status(str, Enum):
     Unexpected: str = "unexpected"
 
     @classmethod
-    def map_to_task_status(cls, status: "Status") -> TaskStatus:
+    def map_to_step_status(cls, status: "Status") -> StepStatus:
         return {
-            Status.Active: TaskStatus.InProgress,
-            Status.Failure: TaskStatus.Failed,
-            Status.Succeeded: TaskStatus.Completed,
-            Status.Unexpected: TaskStatus.Unexpected,
+            Status.Active: StepStatus.InProgress,
+            Status.Failure: StepStatus.Failed,
+            Status.Succeeded: StepStatus.Completed,
+            Status.Unexpected: StepStatus.Unexpected,
         }[status]
 
     @classmethod

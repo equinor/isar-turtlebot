@@ -2,9 +2,10 @@ import logging
 from abc import ABC
 from logging import Logger
 
+from roslibpy import Ros
+
 from isar_turtlebot.ros_bridge.topic import ImageTopic, Topic
 from isar_turtlebot.settings import settings
-from roslibpy import Ros
 
 
 class RosBridgeInterface(ABC):
@@ -21,14 +22,14 @@ class RosBridge(RosBridgeInterface):
 
         self.client: Ros = self.connect_client(host=host, port=port)
 
-        self.execute_task: Topic = Topic(
+        self.execute_step: Topic = Topic(
             client=self.client,
             name="/move_base/goal",
             message_type="move_base_msgs/MoveBaseActionGoal",
             throttle_rate=1000,
         )
 
-        self.task_status: Topic = Topic(
+        self.step_status: Topic = Topic(
             client=self.client,
             name="/move_base/status",
             message_type="actionlib_msgs/GoalStatusArray",
