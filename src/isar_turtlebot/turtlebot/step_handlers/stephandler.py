@@ -1,17 +1,17 @@
 from abc import ABC, abstractmethod
 from typing import Dict
 
-from robot_interface.models.mission.task import Task
+from robot_interface.models.mission import Step
 
 from isar_turtlebot.models.turtlebot_status import Status
 
 
-class TaskHandler(ABC):
+class StepHandler(ABC):
 
-    """Baseclass for task handlers"""
+    """Baseclass for step handlers"""
 
     @abstractmethod
-    def start(self, task: Task) -> None:
+    def start(self, step: Step) -> None:
         pass
 
     @abstractmethod

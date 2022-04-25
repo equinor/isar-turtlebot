@@ -2,15 +2,16 @@ import time
 from typing import Optional
 
 from alitra import Frame, Pose, Transform
+from robot_interface.models.mission import DriveToPose
+
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
 from isar_turtlebot.settings import settings
-from isar_turtlebot.turtlebot.taskhandlers.taskhandler import TaskHandler
+from isar_turtlebot.turtlebot.step_handlers.stephandler import StepHandler
 from isar_turtlebot.utilities.pose_message import encode_pose_message
-from robot_interface.models.mission.task import DriveToPose
 
 
-class DriveToHandler(TaskHandler):
+class DriveToHandler(StepHandler):
     def __init__(
         self,
         bridge: RosBridge,
@@ -23,16 +24,16 @@ class DriveToHandler(TaskHandler):
 
     def start(
         self,
-        task: DriveToPose,
+        step: DriveToPose,
     ) -> None:
 
         goal_pose: Pose = self.transform.transform_pose(
-            pose=task.pose, from_=task.pose.frame, to_=Frame("robot")
+            pose=step.pose, from_=step.pose.frame, to_=Frame("robot")
         )
         goal_id: Optional[str] = self._goal_id()
 
         pose_message: dict = encode_pose_message(pose=goal_pose)
-        self.bridge.execute_task.publish(message=pose_message)
+        self.bridge.execute_step.publish(message=pose_message)
 
         start_time: float = time.time()
         while self._goal_id() == goal_id:
@@ -41,7 +42,7 @@ class DriveToHandler(TaskHandler):
                 raise TimeoutError("Publishing navigation message timed out")
 
     def _goal_id(self) -> Optional[str]:
-        message = self.bridge.task_status.get_value()
+        message = self.bridge.step_status.get_value()
         if not message:
             return None
 
@@ -50,6 +51,6 @@ class DriveToHandler(TaskHandler):
 
     def get_status(self) -> Status:
         status: Status = self.status_from_message(
-            message=self.bridge.task_status.get_value()
+            message=self.bridge.step_status.get_value()
         )
         return status
