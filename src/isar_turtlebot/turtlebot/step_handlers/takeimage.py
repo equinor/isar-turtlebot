@@ -71,7 +71,7 @@ class TakeImageHandler(StepHandler):
                 self.status = Status.Failure
                 raise TimeoutError("Publishing navigation message timed out.")
 
-        start_time: float = time.time()
+        start_time = time.time()
         while self._move_status() is not Status.Succeeded:
             time.sleep(0.1)
             execution_time: float = time.time() - start_time
@@ -97,7 +97,7 @@ class TakeImageHandler(StepHandler):
             file_type=settings.THERMAL_IMAGE_FILETYPE,
         )
 
-        self.inspection: Image = Image(metadata=image_metadata)
+        self.inspection = Image(metadata=image_metadata)
 
         self.status = Status.Succeeded
 

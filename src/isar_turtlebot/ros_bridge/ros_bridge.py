@@ -65,9 +65,13 @@ class RosBridge(RosBridgeInterface):
                     self.logger.info(f"Successfully connected to ROS at {host}:{port}.")
                     break
             except Exception as e:
-                msg: str = f"RosBridge failed to connect to ROS at {host}:{port} with message: {e}"
+                msg: str = (
+                    "RosBridge failed to connect to ROS at"
+                    f" {host}:{port} with message: {e}"
+                )
                 self.logger.warning(
-                    f"{msg} - Attempt {connection_retries - retries} of {connection_retries}"
+                    f"{msg} - Attempt {connection_retries - retries}"
+                    f" of {connection_retries}"
                 )
 
                 if not retries:

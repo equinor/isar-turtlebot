@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import Optional
 from uuid import uuid4
 
-import PIL.Image as PILImage
 import numpy as np
+import PIL.Image as PILImage
 from alitra import Pose, Position, Transform
 from robot_interface.models.inspection.inspection import (
     ThermalImage,
@@ -76,7 +76,7 @@ class TakeThermalImageHandler(StepHandler):
                 self.status = Status.Failure
                 raise TimeoutError("Publishing navigation message timed out.")
 
-        start_time: float = time.time()
+        start_time = time.time()
         while self._move_status() is not Status.Succeeded:
             time.sleep(0.1)
             execution_time: float = time.time() - start_time
@@ -102,7 +102,7 @@ class TakeThermalImageHandler(StepHandler):
             file_type=settings.THERMAL_IMAGE_FILETYPE,
         )
 
-        self.inspection: ThermalImage = ThermalImage(metadata=image_metadata)
+        self.inspection = ThermalImage(metadata=image_metadata)
         self.status = Status.Succeeded
 
     def get_status(self) -> Status:
@@ -137,7 +137,8 @@ class TakeThermalImageHandler(StepHandler):
         image_bytes: bytes = self._convert_to_thermal(image_bytes)
 
         self.filename: Path = Path(
-            f"{self.storage_folder.as_posix()}/{str(uuid4())}.{self.thermal_image_filetype}"
+            f"{self.storage_folder.as_posix()}/{str(uuid4())}"
+            f".{self.thermal_image_filetype}"
         )
 
         self.filename.parent.mkdir(exist_ok=True)

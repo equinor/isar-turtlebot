@@ -4,7 +4,8 @@ from abc import ABC, abstractmethod
 from logging import Logger
 from typing import Any, Optional
 
-from roslibpy import Message, Ros, Topic as RosTopic
+from roslibpy import Message, Ros
+from roslibpy import Topic as RosTopic
 
 from isar_turtlebot.settings import settings
 
@@ -115,13 +116,13 @@ class ImageTopic(ImageTopicInterface):
         if self.log_callbacks:
             self.logger.debug(f"Updated value for topic {self.name}")
 
-    def get_image(self) -> Optional[str]:
+    def get_image(self) -> Optional[bytes]:
         self.take_image = True
         start_time = time.time()
         while not self.image:
             time.sleep(0.1)
             execution_time: float = time.time() - start_time
             if execution_time > self.get_image_timeout:
-                raise TimeoutError(f"Unable to read image data from topic")
+                raise TimeoutError("Unable to read image data from topic")
         self.take_image = False
         return self.image
