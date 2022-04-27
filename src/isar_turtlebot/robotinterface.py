@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from typing import Sequence
 
-from alitra import MapAlignment, Transform, align_maps
+from alitra import MapAlignment, Pose, Transform, align_maps
 from robot_interface.models.inspection.inspection import Inspection
 from robot_interface.models.mission import InspectionStep, Step, StepStatus
 from robot_interface.robot_interface import RobotInterface
@@ -36,3 +36,6 @@ class Robot(RobotInterface):
 
     def get_inspections(self, step: InspectionStep) -> Sequence[Inspection]:
         return self.turtlebot.get_inspections(step.id)
+
+    def get_pose(self) -> Pose:
+        return self.turtlebot.get_pose()

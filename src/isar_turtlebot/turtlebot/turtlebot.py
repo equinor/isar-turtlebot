@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional, Sequence
 from uuid import UUID
 
-from alitra import Transform
+from alitra import Pose, Transform
 from robot_interface.models.exceptions import (
     RobotCommunicationException,
     RobotException,
@@ -20,6 +20,7 @@ from isar_turtlebot.turtlebot.step_handlers import (
     TakeThermalImageHandler,
 )
 from isar_turtlebot.turtlebot.step_handlers.stephandler import StepHandler
+from isar_turtlebot.utilities.pose_message import decode_pose_message
 
 
 class Turtlebot:
@@ -44,6 +45,10 @@ class Turtlebot:
 
         self.filenames: dict = dict()
         self.inspections: dict = dict()
+
+    def get_pose(self) -> Pose:
+        pose_message: dict = self.bridge.pose.get_value()
+        return decode_pose_message(pose_message=pose_message)
 
     def publish_step(self, step: Step) -> None:
         self.step_handler = self.step_handlers[type(step).__name__]
