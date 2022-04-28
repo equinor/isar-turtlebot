@@ -39,3 +39,6 @@ class Robot(RobotInterface):
 
     def get_pose(self) -> Pose:
         return self.turtlebot.get_pose()
+
+    def get_battery(self) -> int:
+        return self.turtlebot.get_battery()

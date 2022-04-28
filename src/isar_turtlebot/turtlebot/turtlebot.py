@@ -50,6 +50,9 @@ class Turtlebot:
         pose_message: dict = self.bridge.pose.get_value()
         return decode_pose_message(pose_message=pose_message)
 
+    def get_battery(self) -> float:
+        return 99.9
+
     def publish_step(self, step: Step) -> None:
         self.step_handler = self.step_handlers[type(step).__name__]
         try:
