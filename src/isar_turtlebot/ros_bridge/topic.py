@@ -95,7 +95,7 @@ class ImageTopic(ImageTopicInterface):
         if self.log_callbacks:
             self.logger: Logger = logging.getLogger("turtlebot_bridge")
 
-        self.image: Optional[bytes] = None
+        self.image: Optional[str] = None
         self.take_image: bool = False
         self.get_image_timeout: float = get_image_timeout
 
@@ -116,7 +116,7 @@ class ImageTopic(ImageTopicInterface):
         if self.log_callbacks:
             self.logger.debug(f"Updated value for topic {self.name}")
 
-    def get_image(self) -> Optional[bytes]:
+    def get_image(self) -> Optional[str]:
         self.take_image = True
         start_time = time.time()
         while not self.image:
