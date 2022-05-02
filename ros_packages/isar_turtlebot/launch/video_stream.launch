@@ -1,0 +1,6 @@
+<launch>
+    <!-- Video stream server -->
+    <node pkg="web_video_server" name="web_video_server" type="web_video_server">
+        <rosparam command="load" file="$(find isar_turtlebot)/config/video_stream.config.yaml"/>
+    </node>
+</launch>
