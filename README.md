@@ -73,6 +73,14 @@ HEADLESS=true docker-compose up --build
 
 The simulation can then be viewed at webviz with the following link: https://webviz.io/app/?rosbridge-websocket-url=ws://localhost:9090/
 
+### Video Stream
+
+A video stream of the front camera is found on the address
+
+```bash
+http://localhost:5000/stream_viewer?topic=/camera/rgb/image_raw
+```
+
 ## Adding new models
 
 New models can be added by placing the model that is used by Gazebo into '/models/new_world/' and adding a "new_world.world" file into 'ros_packages/isar_turtlebot/worlds/'. The map that is used by the planner should be placed into '/ros_packages/isar_turtlebot/maps/' with the name 'new_world.\*'. To add a default configuration for the initial pose and position of the robot in the simulation, add '/config/new_world.cfg' with the desired parameters.

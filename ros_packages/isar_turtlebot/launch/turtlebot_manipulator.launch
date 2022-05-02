@@ -106,6 +106,8 @@
       </include>
   </group>
 
+  <!-- Video Stream-->
+  <include file="$(find isar_turtlebot)/launch/video_stream.launch"/>
 
 
 

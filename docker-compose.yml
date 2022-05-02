@@ -8,6 +8,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9090:9090"
+      - "5000:5000"
     environment:
       - DISPLAY=${DISPLAY}
       - TELEOP_CONTROLLER=${TELEOP_CONTROLLER:-disabled}
