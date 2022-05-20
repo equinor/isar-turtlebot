@@ -14,8 +14,8 @@ class Status(str, Enum):
         return {
             Status.Active: StepStatus.InProgress,
             Status.Failure: StepStatus.Failed,
-            Status.Succeeded: StepStatus.Completed,
-            Status.Unexpected: StepStatus.Unexpected,
+            Status.Succeeded: StepStatus.Successful,
+            Status.Unexpected: StepStatus.Failed,
         }[status]
 
     @classmethod
