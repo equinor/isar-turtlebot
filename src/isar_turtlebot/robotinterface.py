@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Sequence
 
 from alitra import MapAlignment, Transform, align_maps
+from robot_interface.models.initialize import InitializeParams
 from robot_interface.models.inspection.inspection import Inspection
 from robot_interface.models.mission import InspectionStep, Step, StepStatus
 from robot_interface.robot_interface import RobotInterface
@@ -36,3 +37,7 @@ class Robot(RobotInterface):
 
     def get_inspections(self, step: InspectionStep) -> Sequence[Inspection]:
         return self.turtlebot.get_inspections(step.id)
+
+    def initialize(self, params: InitializeParams) -> None:
+        if params.initial_pose:
+            self.turtlebot.set_initial_pose(params.initial_pose)

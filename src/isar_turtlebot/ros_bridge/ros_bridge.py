@@ -33,7 +33,11 @@ class RosBridge(RosBridgeInterface):
             message_type="move_base_msgs/MoveBaseActionGoal",
             throttle_rate=1000,
         )
-
+        self.initial_pose: Topic = Topic(
+            client=self.client,
+            name="/initialpose",
+            message_type="geometry_msgs/PoseWithCovarianceStamped",
+        )
         self.step_status: Topic = Topic(
             client=self.client,
             name="/move_base/status",

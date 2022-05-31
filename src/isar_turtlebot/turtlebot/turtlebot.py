@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional, Sequence
 from uuid import UUID
 
-from alitra import Transform
+from alitra import Pose, Transform
 from robot_interface.models.exceptions import (
     RobotCommunicationException,
     RobotException,
@@ -20,6 +20,7 @@ from isar_turtlebot.turtlebot.step_handlers import (
     TakeThermalImageHandler,
 )
 from isar_turtlebot.turtlebot.step_handlers.stephandler import StepHandler
+from isar_turtlebot.utilities.pose_message import encode_initial_pose
 
 
 class Turtlebot:
@@ -82,3 +83,6 @@ class Turtlebot:
         with open(filename, "rb") as image_file:
             image_data = image_file.read()
         return image_data
+
+    def set_initial_pose(self, pose: Pose) -> None:
+        self.bridge.initial_pose.publish(encode_initial_pose(pose=pose))
