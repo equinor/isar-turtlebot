@@ -30,6 +30,64 @@ def encode_pose_message(pose: Pose) -> dict:
     }
 
 
+def encode_initial_pose(pose: Pose) -> dict:
+    return {
+        "pose": {
+            "pose": {
+                "position": {
+                    "x": pose.position.x,
+                    "y": pose.position.y,
+                    "z": pose.position.z,
+                },
+                "orientation": {
+                    "x": pose.orientation.x,
+                    "y": pose.orientation.y,
+                    "z": pose.orientation.z,
+                    "w": pose.orientation.w,
+                },
+            },
+            "covariance": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+            ],
+        },
+    }
+
+
 def decode_pose_message(pose_message: dict, frame: Frame = Frame("robot")) -> Pose:
     position_message: Dict = pose_message["pose"]["pose"]["position"]
     orientation_message: Dict = pose_message["pose"]["pose"]["orientation"]
