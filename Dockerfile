@@ -53,4 +53,12 @@ COPY ./docker_scripts/setup.sh /usr/share/gazebo/setup.sh
 COPY ./config /home/config
 COPY ./docker_scripts/entrypoint.sh /home/
 
+# Change user to avoid running as root
+# User needs to have an explicit guid for radix
+RUN useradd -ms /bin/bash --uid 1001 -g users turtle_sim
+RUN chown -R 1001 /home
+RUN chmod 755 /home
+
+USER 1001
+
 CMD /home/entrypoint.sh
