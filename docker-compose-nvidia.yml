@@ -2,3 +2,8 @@ version: "2.3"
 services:
   noetic:
     runtime: nvidia
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+      - DISPLAY=${DISPLAY}
+      - HEADLESS=false
