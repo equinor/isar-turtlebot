@@ -1,12 +1,15 @@
 import os
 from pathlib import Path
-from typing import Sequence
+from queue import Queue
+from threading import Thread
+from typing import List, Sequence
 
 from alitra import MapAlignment, Transform, align_maps
 from robot_interface.models.initialize import InitializeParams
 from robot_interface.models.inspection.inspection import Inspection
 from robot_interface.models.mission import InspectionStep, Step, StepStatus
 from robot_interface.robot_interface import RobotInterface
+from robot_interface.telemetry.mqtt_client import MqttTelemetryPublisher
 
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge, RosBridgeInterface
 from isar_turtlebot.turtlebot import Turtlebot
@@ -41,3 +44,38 @@ class Robot(RobotInterface):
     def initialize(self, params: InitializeParams) -> None:
         if params.initial_pose:
             self.turtlebot.set_initial_pose(params.initial_pose)
+
+    def get_telemetry_publishers(self, queue: Queue, robot_id: str) -> List[Thread]:
+        publisher_threads: List[Thread] = []
+
+        pose_publisher: MqttTelemetryPublisher = MqttTelemetryPublisher(
+            mqtt_queue=queue,
+            telemetry_method=self.turtlebot.get_pose_telemetry,
+            topic=f"isar/{robot_id}/pose",
+            interval=1,
+            retain=True,
+        )
+        pose_thread: Thread = Thread(
+            target=pose_publisher.run,
+            args=[robot_id],
+            name="ISAR Turtlebot Pose Publisher",
+            daemon=True,
+        )
+        publisher_threads.append(pose_thread)
+
+        battery_publisher: MqttTelemetryPublisher = MqttTelemetryPublisher(
+            mqtt_queue=queue,
+            telemetry_method=self.turtlebot.get_battery_telemetry,
+            topic=f"isar/{robot_id}/battery",
+            interval=1,
+            retain=True,
+        )
+        battery_thread: Thread = Thread(
+            target=battery_publisher.run,
+            args=[robot_id],
+            name="ISAR Turtlebot Battery Publisher",
+            daemon=True,
+        )
+        publisher_threads.append(battery_thread)
+
+        return publisher_threads

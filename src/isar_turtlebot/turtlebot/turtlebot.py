@@ -1,4 +1,6 @@
+import json
 import logging
+from datetime import datetime
 from logging import Logger
 from pathlib import Path
 from typing import Optional, Sequence
@@ -11,6 +13,11 @@ from robot_interface.models.exceptions import (
 )
 from robot_interface.models.inspection.inspection import Inspection
 from robot_interface.models.mission import InspectionStep, Step, StepStatus
+from robot_interface.telemetry.payloads import (
+    TelemetryBatteryPayload,
+    TelemetryPosePayload,
+)
+from robot_interface.utilities.json_service import EnhancedJSONEncoder
 
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge import RosBridge
@@ -86,3 +93,17 @@ class Turtlebot:
 
     def set_initial_pose(self, pose: Pose) -> None:
         self.bridge.initial_pose.publish(encode_initial_pose(pose=pose))
+
+    def get_pose_telemetry(self, robot_id: str) -> str:
+        pose_payload: TelemetryPosePayload = TelemetryPosePayload(
+            pose=self.bridge.pose.get_value(),
+            robot_id=robot_id,
+            timestamp=datetime.utcnow(),
+        )
+        return json.dumps(pose_payload, cls=EnhancedJSONEncoder)
+
+    def get_battery_telemetry(self, robot_id: str) -> str:
+        battery_payload: TelemetryBatteryPayload = TelemetryBatteryPayload(
+            battery_level=95.2, robot_id=robot_id, timestamp=datetime.utcnow()
+        )
+        return json.dumps(battery_payload, cls=EnhancedJSONEncoder)
