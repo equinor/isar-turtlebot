@@ -11,6 +11,9 @@ from robot_interface.models.exceptions import (
     RobotCommunicationException,
     RobotException,
 )
+from robot_interface.models.exceptions.robot_exceptions import (
+    RobotInvalidTelemetryException,
+)
 from robot_interface.models.inspection.inspection import Inspection
 from robot_interface.models.mission import InspectionStep, Step, StepStatus
 from robot_interface.telemetry.payloads import (
@@ -27,7 +30,10 @@ from isar_turtlebot.turtlebot.step_handlers import (
     TakeThermalImageHandler,
 )
 from isar_turtlebot.turtlebot.step_handlers.stephandler import StepHandler
-from isar_turtlebot.utilities.pose_message import encode_initial_pose
+from isar_turtlebot.utilities.pose_message import (
+    decode_pose_message,
+    encode_initial_pose,
+)
 
 
 class Turtlebot:
@@ -95,8 +101,14 @@ class Turtlebot:
         self.bridge.initial_pose.publish(encode_initial_pose(pose=pose))
 
     def get_pose_telemetry(self, robot_id: str) -> str:
+        pose_turtlebot: dict = self.bridge.pose.get_value()
+        if not pose_turtlebot:
+            raise RobotInvalidTelemetryException
+
+        pose: Pose = decode_pose_message(pose_message=pose_turtlebot)
+
         pose_payload: TelemetryPosePayload = TelemetryPosePayload(
-            pose=self.bridge.pose.get_value(),
+            pose=pose,
             robot_id=robot_id,
             timestamp=datetime.utcnow(),
         )
