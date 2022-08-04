@@ -277,6 +277,52 @@ sudo ENABLE_MANIPULATOR=true MANIPULATOR_GUI="rviz" TELEOP_CONTROLLER="xbox" doc
 
 ```
 
+### Simultaneous teleoperation
+
+A custom node is included the `isar_turtlebot` ROS package that allows for teleoperation of the turtlebot base and manipulator simultaneously. The manipulator responds directly to input and can be used without the motion planner in RViz.
+
+The arm is controlled by moving a reference point for the end effector based on control inputs, and then using the moveit package for performing inverse kinematics at every change. The joint states are sent directly to the control system on the turtlebot.
+
+Run the node with the following command:
+
+```bash
+roslaunch isar_turtlebot turtlebot_manipulator_teleoperation.launch teleop_controller:="xbox"
+
+```
+
+Add the argument below to activate the node without waiting for a mission step from ISAR:
+
+```bash
+roslaunch isar_turtlebot turtlebot_manipulator_teleoperation.launch teleop_controller:="xbox" teleop_activate_from_start:="True"
+
+```
+
+The control mappings are as follows:
+
+#### Keyboard:
+* `WASD`: Wheel velocities
+* `IJKL`: Move reference of arm end effector in the horizontal plane
+* `UO`: Move reference of arm end effector along the vertical axis
+* `,.`: Close and open the gripper
+* `SHIFT`: Hold to double speed
+* `h`: Reset to home position
+* `p`: Pick up object
+* `v`: Place down object
+* `t`: Throw held object
+* `ENTER`: Deactivate teleoperation
+
+#### Xbox one controller:
+* `Left-stick`: Wheel velocities
+* `Right-stick` Move reference of arm end effector in the horizontal plane
+* `Triggers`: Move reference of arm end effector along the vertical axis
+* `Bumpers`: Close and open the gripper
+* `A`: Hold to double speed
+* `Y`: Reset to home position
+* `B`: Pick up object
+* `X`: Place down object
+* `View`: Throw held object
+* `Menu`: Deactivate teleoperation
+
 ## Development
 
 For local development, please fork the repository. Then, clone and install in the repository root folder:

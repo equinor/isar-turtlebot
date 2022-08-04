@@ -38,7 +38,7 @@ class TeleOpHandler(StepHandler):
         
         self.status = Status.Succeeded
     
-    def activated(self):
+    def activated(self) -> bool:
         message = self.bridge.teleop_activate.get_value()
         if not message:
             return True

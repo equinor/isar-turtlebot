@@ -4,15 +4,14 @@
     <arg name="map_file" default="$(env HOME)/map.yaml"/>
     <arg name="move_forward_only" default="false"/>
     <arg name="open_rviz" default="true"/>
-    <arg name="initial_pose_x" default="-1.7"/>
-    <arg name="initial_pose_y" default="-0.5"/>
-    <arg name="initial_pose_a" default="-0.1"/>
+    <arg name="initial_pose_x" default="0.0"/>
+    <arg name="initial_pose_y" default="0.0"/>
+    <arg name="initial_pose_a" default="0.0"/>
     <arg name="use_navigation" default="True"/>
-
+    <arg name="teleop_activate_from_start" default="False"/>
 
     <include file="$(find turtlebot3_manipulation_bringup)/launch/turtlebot3_manipulation_bringup.launch" />
     <include file="$(find isar_turtlebot_moveit_config)/launch/move_group.launch" />
-
 
     <group if="$(arg use_navigation)">
         <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
@@ -23,25 +22,21 @@
             <rosparam command="load" file="$(find turtlebot3_manipulation_slam)/config/scan_data_filter.yaml" />
         </node>  
 
-
         <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
             <param name="publish_frequency" type="double" value="50.0" />
             <param name="tf_prefix" value=""/>
         </node>
 
-        <!-- AMCL -->
         <include file="$(find turtlebot3_navigation)/launch/amcl.launch">
             <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
             <arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
             <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
         </include>
 
-        <!-- move_base -->
         <include file="$(find turtlebot3_navigation)/launch/move_base.launch">
             <arg name="move_forward_only" value="$(arg move_forward_only)"/>
         </include>
 
-        <!-- rviz -->
         <group if="$(arg open_rviz)"> 
             <node pkg="rviz" type="rviz" name="rviz" required="true"
                 args="-d $(find turtlebot3_navigation)/rviz/turtlebot3_navigation.rviz"/>
@@ -57,6 +52,8 @@
         </node>
     </group>
     
-    <node pkg="turtlebot_teleoperation" type="teleop.py" name="teleop"/>
+    <node pkg="isar_turtlebot" type="teleop.py" name="teleop">
+        <param name="teleop_activate_from_start" value="$(arg teleop_activate_from_start)" />
+    </node>
 
 </launch>

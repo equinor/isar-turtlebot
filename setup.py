@@ -34,6 +34,7 @@ setup(
         "pydantic",
         "roslibpy",
         "scipy",
+        "pynput",
     ],
     extras_require={"dev": ["pytest", "black", "mypy", "flake8"]},
     python_requires=">=3.10",
