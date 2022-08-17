@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     ROS_BRIDGE_HOST: str = Field(default="localhost")
     ROS_BRIDGE_PORT: int = Field(default=9090)
 
+    TURTLEBOT_MAP: str = Field(default="klab_turtlebot")
+
     STORAGE_FOLDER: str = Field(default="./temp_results")
     PUBLISHING_TIMEOUT: int = Field(default=30)
     INSPECTION_POSE_TIMEOUT: int = Field(default=60)

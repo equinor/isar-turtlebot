@@ -1,77 +1,78 @@
-{
-  "name": "turtleworld",
-  "map_from": {
-    "name": "turtleworld_robot",
-    "reference_positions": {
-      "positions": [
+  {
+    "name": "klab_turtlebot",
+    "map_from": {
+      "name": "klab_turtlebot_robot",
+      "reference_positions": {
+        "positions": [
         {
-          "x": -3.32535,
-          "y": 7.68465,
+          "x": -2.677,
+          "y": -1.422,
           "z": 0,
           "frame": {
             "name": "robot"
           }
         },
         {
-          "x": -5.38357,
-          "y": 4.13757,
+          "x": -2.677,
+          "y": 2.299,
           "z": 0,
           "frame": {
             "name": "robot"
           }
         },
         {
-          "x": 1.07685,
-          "y": 1.49371,
+          "x": -3.236,
+          "y": 4.083,
           "z": 0,
           "frame": {
             "name": "robot"
           }
         }
-      ],
+        ],
+        "frame": {
+          "name": "robot"
+        }
+      },
       "frame": {
         "name": "robot"
       }
     },
-    "frame": {
-      "name": "robot"
-    }
-  },
-  "map_to": {
-    "name": "turtleworld_asset",
-    "reference_positions": {
-      "positions": [
-        {
-          "x": 20258.894,
-          "y": 5244.558,
-          "z": 14.5,
-          "frame": {
-            "name": "asset"
+    "map_to": {
+      "name": "klab_turtlebot_asset",
+      "reference_positions": {
+        "positions": [
+          {
+            "x": 20250.208,
+            "y": 5251.511,
+            "z": 14.450,
+            "frame": {
+              "name": "asset"
+            }
+          },
+          {
+            "x": 20250.208,
+            "y": 5247.705,
+            "z": 14.450,
+            "frame": {
+              "name": "asset"
+            }
+          },
+          {
+            "x": 20250.864,
+            "y": 5245.796,
+            "z": 14.450,
+            "frame": {
+              "name": "asset"
+            }
           }
-        },
-        {
-          "x": 20260.792,
-          "y": 5248.469,
-          "z": 14.5,
-          "frame": {
-            "name": "asset"
-          }
-        },
-        {
-          "x": 20254.044,
-          "y": 5250.635,
-          "z": 14.5,
-          "frame": {
-            "name": "asset"
-          }
+        ],
+        "frame": {
+          "name": "asset"
         }
-      ],
+      },
       "frame": {
         "name": "asset"
       }
-    },
-    "frame": {
-      "name": "asset"
     }
   }
-}
+  
