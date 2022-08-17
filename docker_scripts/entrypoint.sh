@@ -5,8 +5,8 @@ source /home/catkin_ws/devel/setup.bash
 
 export TURTLEBOT3_MODEL=waffle
 
-WORLD_NAME="house"
-
+# WORLD_NAME="house"
+WORLD_NAME="klab_compressor"
 
 
 

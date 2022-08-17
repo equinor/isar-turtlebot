@@ -53,8 +53,8 @@ class TakeImageHandler(StepHandler):
         current_pose: Pose = self._get_robot_pose()
         target: Position = self.transform.transform_position(
             positions=step.target,
-            from_=self.transform.from_,
-            to_=self.transform.to_,
+            from_=self.transform.to_,
+            to_=self.transform.from_,
         )
         inspection_pose: Pose = get_inspection_pose(
             current_pose=current_pose, target=target
