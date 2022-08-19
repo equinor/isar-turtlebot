@@ -6,3 +6,11 @@ repos:
         language_version: python3
         args: []
         exclude: gen/
+  - repo: local
+    hooks:
+      - id: pytest-check
+        name: pytest-check
+        entry: pytest .
+        language: system
+        types: [python]
+        always_run: true
