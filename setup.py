@@ -35,7 +35,7 @@ setup(
         "roslibpy",
         "scipy",
     ],
-    extras_require={"dev": ["pytest", "black", "mypy", "flake8"]},
+    extras_require={"dev": ["pytest", "black", "mypy", "flake8", "pre-commit"]},
     python_requires=">=3.10",
     tests_require=["pytest"],
 )
