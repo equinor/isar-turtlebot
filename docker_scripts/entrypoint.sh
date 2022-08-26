@@ -5,11 +5,6 @@ source /home/catkin_ws/devel/setup.bash
 
 export TURTLEBOT3_MODEL=waffle
 
-# WORLD_NAME="house"
-WORLD_NAME="klab_compressor"
-
-
-
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE}" )" >/dev/null && pwd )"
 CONFIG_FILE="$SCRIPTDIR/config/$WORLD_NAME.cfg"
 

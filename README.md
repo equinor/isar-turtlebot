@@ -83,12 +83,30 @@ http://localhost:5000/stream_viewer?topic=/camera/rgb/image_raw
 
 ## Adding new models
 
-New models can be added by placing the model that is used by Gazebo into '/models/new_world/' and adding a "new_world.world" file into 'ros_packages/isar_turtlebot/worlds/'. The map that is used by the planner should be placed into '/ros_packages/isar_turtlebot/maps/' with the name 'new_world.\*'. To add a default configuration for the initial pose and position of the robot in the simulation, add '/config/new_world.cfg' with the desired parameters.
+New models can be added by placing the model that is used by Gazebo into 'models/new_world/' and adding a "new_world.world" file into 'worlds/'. The map that is used by the planner should be placed into 'maps/' with the name 'new_world.\*'. To add a default configuration for the initial pose and position of the robot in the simulation, add 'config/new_world.cfg' with the desired parameters.
+
+### Add new model from turtlesimmodels storage account
+
+Sett the following secret:
+
+```bash
+export STORAGE_ACCOUNT_KEY=secret-key-here
+```
+
+Then run the following:
+
+```bash
+./path-to-repo/az_scripts/download_sim_models.sh
+```
+
 
 ### Running custom model
 
-To run the simulation with the custom model, set `WORLD_NAME=new_world` in `docker_scripts/entrypoint.sh`.
+To run the simulation with the custom model set the WORLD_NAME as an environment variable in a .env file or argument like this:
 
+```bash
+WORLD_NAME=your_custom_model docker-compose up --build
+```
 ## Simulation without docker
 
 ### Simulator installation
