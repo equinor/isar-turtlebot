@@ -10,6 +10,9 @@ ENV ENABLE_MANIPULATOR=${ENABLE_MANIPULATOR}
 ARG OPEN_MANIPULATOR_GUI
 ENV MANIPULATOR_GUI=${MANIPULATOR_GUI}
 
+ARG WORLD_NAME
+ENV WORLD_NAME=${WORLD_NAME}
+
 
 ENV NVIDIA_VISIBLE_DEVICES \
     ${NVIDIA_VISIBLE_DEVICES:-all}
@@ -52,6 +55,9 @@ COPY ./docker_scripts/setup.sh /usr/share/gazebo/setup.sh
 
 COPY ./config /home/config
 COPY ./docker_scripts/entrypoint.sh /home/
+COPY ./worlds /home/catkin_ws/src/isar_turtlebot/worlds/
+COPY ./maps /home/catkin_ws/src/isar_turtlebot/maps/
+
 
 # Change user to avoid running as root
 # User needs to have an explicit guid for radix
