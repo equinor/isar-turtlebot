@@ -140,5 +140,5 @@ results/
 models/klab*
 
 config/klab*
-ros_packages/isar_turtlebot/maps/klab*
-ros_packages/isar_turtlebot/worlds/klab*
+maps/klab*
+worlds/klab*
