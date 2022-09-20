@@ -59,7 +59,7 @@ docker-compose up --build
 
 The simulation world that is used can be set by changing the world variable in the 'entrypoint.sh' file.
 
-Additional settings, such as using Nvidia GPU or gamepad input to the docker container is included via separate .yml-files. To run the docker container with these settings the corresponding `docker-compose-setting.yml` file must be spesified together with the main `docker-compose.yml` file. Several setting files can be included.
+Additional settings, such as using Nvidia GPU or gamepad input to the docker container is included via separate .yml-files. To run the docker container with these settings the corresponding `docker-compose-setting.yml` file must be specified together with the main `docker-compose.yml` file. Several setting files can be included.
 
 ```bash
 docker-compose -f docker-compose.yml -f docker-compose-setting.yml up --build

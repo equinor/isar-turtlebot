@@ -5,7 +5,7 @@ services:
     container_name: turtle_sim
     build:
       context: ./
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.Simulator
     ports:
       - "9090:9090"
       - "5000:5000"
