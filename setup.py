@@ -12,7 +12,12 @@ setup(
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     package_data={
-        "isar_turtlebot": ["settings/maps/turtleworld.json", "config/settings.env"]
+        "isar_turtlebot": [
+            "settings/maps/turtleworld.json",
+            "settings/maps/klab_turtlebot_old.json",
+            "settings/maps/klab_turtlebot.json",
+            "config/settings.env",
+        ]
     },
     classifiers=[
         "Environment :: Other Environment",
