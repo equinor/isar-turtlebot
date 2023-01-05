@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Optional, Sequence
 from uuid import UUID
 
-from alitra import Pose, Transform
+from alitra import Frame, Pose, Transform
 from robot_interface.models.exceptions import (
     RobotCommunicationException,
     RobotException,
@@ -105,7 +105,10 @@ class Turtlebot:
         if not pose_turtlebot:
             raise RobotInvalidTelemetryException
 
-        pose: Pose = decode_pose_message(pose_message=pose_turtlebot)
+        robot_pose: Pose = decode_pose_message(pose_message=pose_turtlebot)
+        pose: Pose = self.transform.transform_pose(
+            pose=robot_pose, from_=robot_pose.frame, to_=Frame("asset")
+        )
 
         pose_payload: TelemetryPosePayload = TelemetryPosePayload(
             pose=pose,
