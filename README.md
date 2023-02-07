@@ -36,7 +36,7 @@ If the result is `snap.docker.dockerd.service`, the installation has been done u
 Build the container. This needs to be done once before one can give the container access to the screen.
 
 ```bash
-docker-compose build
+docker compose build
 ```
 
 Give the docker container access to the screen, this needs to be done each time the computer is restarted.
@@ -48,13 +48,13 @@ xhost +local:`docker inspect --format='{{ .Config.Hostname }}' turtle_sim`
 Start the simulation
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 To build and start the simulation
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 The simulation world that is used can be set by changing the world variable in the 'entrypoint.sh' file.
@@ -62,13 +62,13 @@ The simulation world that is used can be set by changing the world variable in t
 Additional settings, such as using Nvidia GPU or gamepad input to the docker container is included via separate .yml-files. To run the docker container with these settings the corresponding `docker-compose-setting.yml` file must be specified together with the main `docker-compose.yml` file. Several setting files can be included.
 
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose-setting.yml up --build
+docker compose -f docker-compose.yml -f docker-compose-setting.yml up --build
 ```
 
-To run the simulation in headless mode set the environment variable `HEADLESS=true` prior to launching the docker container. Alternatively directly as an environment variable in the docker-compose command:
+To run the simulation in headless mode set the environment variable `HEADLESS=true` prior to launching the docker container. Alternatively directly as an environment variable in the docker compose command:
 
 ```bash
-HEADLESS=true docker-compose up --build
+HEADLESS=true docker compose up --build
 ```
 
 The simulation can then be viewed at webviz with the following link: https://webviz.io/app/?rosbridge-websocket-url=ws://localhost:9090/
@@ -105,7 +105,7 @@ Then run the following:
 To run the simulation with the custom model set the WORLD_NAME as an environment variable in a .env file or argument like this:
 
 ```bash
-WORLD_NAME=your_custom_model docker-compose up --build
+WORLD_NAME=your_custom_model docker compose up --build
 ```
 ## Simulation without docker
 
@@ -231,7 +231,7 @@ jstest /dev/input/jsX.
 To enable teleoperation with a joystick while running in docker the joystick must be added as a device in `docker-compose.yaml`. This is done by including the `docker-compose-gamepad.yaml` file as decribed in the docker section. Additionally the environment variable `TELEOP_CONTROLLER` must be specified(currently `"xbox"` is the only supported controller):
 
 ```bash
-TELEOP_CONTROLLER="xbox" docker-compose -f docker-compose.yml -f docker-compose-gamepad.yml up --build
+TELEOP_CONTROLLER="xbox" docker compose -f docker-compose.yml -f docker-compose-gamepad.yml up --build
 ```
 
 To enable teleoperation while running locally, first install the two packages:
@@ -274,7 +274,7 @@ roslaunch isar-turtlebot turtlebot_manipulator.launch open_manipulator_gui:=true
 Alternatively the simulation with manipulator can also run in docker by including the parameter `ENABLE_MANIPULATOR` and the controller GUI set according to the description above:
 
 ```bash
-sudo ENABLE_MANIPULATOR=true MANIPULATOR_GUI="rviz" docker-compose up --build
+sudo ENABLE_MANIPULATOR=true MANIPULATOR_GUI="rviz" docker compose up --build
 ```
 
 The simulation can also run in docker as described in the section for [docker](#run-simulation).
@@ -291,7 +291,7 @@ roslaunch isar_turtlebot turtlebot_manipulator.launch teleop_controller:="xbox"
 To run simulation in docker with teleoperation of manipulator:
 
 ```bash
-sudo ENABLE_MANIPULATOR=true MANIPULATOR_GUI="rviz" TELEOP_CONTROLLER="xbox" docker-compose -f docker-compose.yml -f docker-compose-setting.yml  up --build
+sudo ENABLE_MANIPULATOR=true MANIPULATOR_GUI="rviz" TELEOP_CONTROLLER="xbox" docker compose -f docker-compose.yml -f docker-compose-setting.yml  up --build
 
 ```
 
