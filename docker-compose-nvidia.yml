@@ -1,9 +1,15 @@
-version: "2.3"
+version: "3.9"
 services:
   noetic:
-    runtime: nvidia
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
     environment:
       - DISPLAY=${DISPLAY}
       - HEADLESS=false
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
