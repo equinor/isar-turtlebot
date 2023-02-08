@@ -10,7 +10,6 @@ class VideoStreamer:
         self.bridge: RosBridge = bridge
 
     def main(self):
-
         while True:
             image_data: str = self.bridge.video_stream.get_image()
             image_bytes: bytes = base64.b64decode(image_data)

@@ -4,7 +4,6 @@ from scipy.spatial.transform import Rotation
 
 
 def get_inspection_pose(current_pose: Pose, target: Position) -> Pose:
-
     direction = target.to_array() - current_pose.position.to_array()
     alpha = np.arctan2(direction[1], direction[0])
     rotation = Rotation.from_euler("zyx", [alpha, 0, 0], degrees=False)

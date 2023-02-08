@@ -53,7 +53,6 @@ class TakeThermalImageHandler(StepHandler):
         self,
         step: TakeThermalImage,
     ) -> None:
-
         self.status = Status.Active
         current_pose: Pose = self._get_robot_pose()
         target: Position = self.transform.transform_position(
