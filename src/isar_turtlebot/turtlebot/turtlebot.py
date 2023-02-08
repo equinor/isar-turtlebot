@@ -40,7 +40,6 @@ class Turtlebot:
     """Step manager for Turtlebot."""
 
     def __init__(self, bridge: RosBridge, transform: Transform) -> None:
-
         self.logger: Logger = logging.getLogger("robot")
         self.bridge: RosBridge = bridge
         self.transform: Transform = transform
