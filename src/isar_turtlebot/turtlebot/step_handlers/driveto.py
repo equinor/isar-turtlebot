@@ -26,7 +26,6 @@ class DriveToHandler(StepHandler):
         self,
         step: DriveToPose,
     ) -> None:
-
         goal_pose: Pose = self.transform.transform_pose(
             pose=step.pose, from_=step.pose.frame, to_=Frame("robot")
         )

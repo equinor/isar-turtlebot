@@ -47,7 +47,6 @@ class TakeImageHandler(StepHandler):
         self.inspection: Optional[Image] = None
 
     def start(self, step: TakeImage) -> None:
-
         self.status = Status.Active
 
         current_pose: Pose = self._get_robot_pose()

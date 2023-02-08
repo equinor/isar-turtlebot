@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import Optional
 from uuid import uuid4
 
-import numpy as np
 import PIL.Image as PILImage
+import numpy as np
 from alitra import Pose, Position, Transform
 from robot_interface.models.inspection.inspection import (
     ThermalImage,
@@ -53,7 +53,6 @@ class TakeThermalImageHandler(StepHandler):
         self,
         step: TakeThermalImage,
     ) -> None:
-
         self.status = Status.Active
         current_pose: Pose = self._get_robot_pose()
         target: Position = self.transform.transform_position(
