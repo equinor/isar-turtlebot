@@ -8,6 +8,7 @@ from alitra import MapAlignment, Transform, align_maps
 from robot_interface.models.initialize import InitializeParams
 from robot_interface.models.inspection.inspection import Inspection
 from robot_interface.models.mission import InspectionStep, Step, StepStatus
+from robot_interface.models.mission.status import RobotStatus
 from robot_interface.robot_interface import RobotInterface
 from robot_interface.telemetry.mqtt_client import MqttTelemetryPublisher
 
@@ -80,3 +81,6 @@ class Robot(RobotInterface):
         publisher_threads.append(battery_thread)
 
         return publisher_threads
+
+    def robot_status(self) -> RobotStatus:
+        return RobotStatus.Available
