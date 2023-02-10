@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   turtlebot3_bringup
   turtlebot3_navigation
+  std_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -206,3 +207,8 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+
+catkin_install_python(PROGRAMS src/teleop.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

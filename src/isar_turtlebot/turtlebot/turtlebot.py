@@ -28,6 +28,7 @@ from isar_turtlebot.turtlebot.step_handlers import (
     DriveToHandler,
     TakeImageHandler,
     TakeThermalImageHandler,
+    TeleOpHandler
 )
 from isar_turtlebot.turtlebot.step_handlers.stephandler import StepHandler
 from isar_turtlebot.utilities.pose_message import (
@@ -48,9 +49,8 @@ class Turtlebot:
         self.step_handlers = {
             "DriveToPose": DriveToHandler(bridge=self.bridge, transform=transform),
             "TakeImage": TakeImageHandler(bridge=self.bridge, transform=transform),
-            "TakeThermalImage": TakeThermalImageHandler(
-                bridge=self.bridge, transform=transform
-            ),
+            "TakeThermalImage": TakeThermalImageHandler(bridge=self.bridge, transform=transform),
+            "TeleOp": TeleOpHandler(bridge=self.bridge, transform=transform)
         }
 
         self.step_handler: Optional[StepHandler] = None

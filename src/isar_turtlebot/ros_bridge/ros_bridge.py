@@ -56,6 +56,12 @@ class RosBridge(RosBridgeInterface):
             message_type="sensor_msgs/CompressedImage",
         )
 
+        self.teleop_activate: Topic = Topic(
+            client=self.client,
+            name="/turtlebot_teleop",
+            message_type="std_msgs/Bool",
+        )
+
     def connect_client(
         self,
         host: str,
