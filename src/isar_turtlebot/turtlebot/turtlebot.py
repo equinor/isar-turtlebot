@@ -99,7 +99,7 @@ class Turtlebot:
     def set_initial_pose(self, pose: Pose) -> None:
         self.bridge.initial_pose.publish(encode_initial_pose(pose=pose))
 
-    def get_pose_telemetry(self, robot_id: str) -> str:
+    def get_pose_telemetry(self, robot_name: str, isar_id: str) -> str:
         pose_turtlebot: dict = self.bridge.pose.get_value()
         if not pose_turtlebot:
             raise RobotInvalidTelemetryException
@@ -111,13 +111,17 @@ class Turtlebot:
 
         pose_payload: TelemetryPosePayload = TelemetryPosePayload(
             pose=pose,
-            robot_id=robot_id,
+            isar_id=isar_id,
+            robot_name=robot_name,
             timestamp=datetime.utcnow(),
         )
         return json.dumps(pose_payload, cls=EnhancedJSONEncoder)
 
-    def get_battery_telemetry(self, robot_id: str) -> str:
+    def get_battery_telemetry(self, robot_name: str, isar_id: str) -> str:
         battery_payload: TelemetryBatteryPayload = TelemetryBatteryPayload(
-            battery_level=95.2, robot_id=robot_id, timestamp=datetime.utcnow()
+            battery_level=95.2,
+            isar_id=isar_id,
+            robot_name=robot_name,
+            timestamp=datetime.utcnow(),
         )
         return json.dumps(battery_payload, cls=EnhancedJSONEncoder)

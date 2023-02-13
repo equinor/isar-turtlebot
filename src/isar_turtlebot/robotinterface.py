@@ -47,19 +47,21 @@ class Robot(RobotInterface):
         if params.initial_pose:
             self.turtlebot.set_initial_pose(params.initial_pose)
 
-    def get_telemetry_publishers(self, queue: Queue, robot_id: str) -> List[Thread]:
+    def get_telemetry_publishers(
+        self, queue: Queue, robot_name: str, isar_id: str
+    ) -> List[Thread]:
         publisher_threads: List[Thread] = []
 
         pose_publisher: MqttTelemetryPublisher = MqttTelemetryPublisher(
             mqtt_queue=queue,
             telemetry_method=self.turtlebot.get_pose_telemetry,
-            topic=f"isar/{robot_id}/pose",
+            topic=f"isar/{isar_id}/pose",
             interval=1,
             retain=True,
         )
         pose_thread: Thread = Thread(
             target=pose_publisher.run,
-            args=[robot_id],
+            args=[isar_id, robot_name],
             name="ISAR Turtlebot Pose Publisher",
             daemon=True,
         )
@@ -68,13 +70,13 @@ class Robot(RobotInterface):
         battery_publisher: MqttTelemetryPublisher = MqttTelemetryPublisher(
             mqtt_queue=queue,
             telemetry_method=self.turtlebot.get_battery_telemetry,
-            topic=f"isar/{robot_id}/battery",
+            topic=f"isar/{isar_id}/battery",
             interval=1,
             retain=True,
         )
         battery_thread: Thread = Thread(
             target=battery_publisher.run,
-            args=[robot_id],
+            args=[isar_id, robot_name],
             name="ISAR Turtlebot Battery Publisher",
             daemon=True,
         )
