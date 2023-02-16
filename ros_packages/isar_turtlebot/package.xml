@@ -54,6 +54,7 @@
   <depend>rosbridge_server</depend>
   <depend>rospy</depend>
   <depend>turtlebot3_bringup</depend>
+  <depend>turtlebot3_description</depend>
   <depend>turtlebot3_navigation</depend>
   <depend>turtlebot3_slam</depend>
   <depend>gmapping</depend>
