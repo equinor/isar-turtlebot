@@ -90,3 +90,6 @@ class RosBridge(RosBridgeInterface):
         client.run()
 
         return client
+
+    def is_connected(self) -> bool:
+        return self.client.is_connected

@@ -83,4 +83,8 @@ class Robot(RobotInterface):
         return publisher_threads
 
     def robot_status(self) -> RobotStatus:
+        if not self.turtlebot.bridge.is_connected():
+            return RobotStatus.Offline
+        if self.step_status() == StepStatus.InProgress:
+            return RobotStatus.Busy
         return RobotStatus.Available
