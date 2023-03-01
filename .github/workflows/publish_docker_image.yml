@@ -15,11 +15,15 @@ on:
   workflow_dispatch:
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  GITHUB_REGISTRY: ghcr.io
+  GITHUB_IMAGE_NAME: ${{ github.repository }}
+  AURORA_DEV_REGISTRY: auroradevacr.azurecr.io
+  AURORA_DEV_IMAGE_NAME: robotics/isar-turtlebot
+  AURORA_PROD_REGISTRY: auroraprodacr.azurecr.io
+  AURORA_PROD_IMAGE_NAME: robotics/isar-turtlebot
 
 jobs:
-  build-and-push-simulator:
+  build-and-push-simulator-ghcr:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -32,7 +36,7 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ${{ env.GITHUB_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -40,7 +44,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-simulator
+          images: ${{ env.GITHUB_REGISTRY }}/${{ env.GITHUB_IMAGE_NAME }}-simulator
 
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
@@ -51,7 +55,71 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  build-and-push-isar-with-turtlebot:
+  build-and-push-simulator-to-auroradevacr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Aurora Dev Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.AURORA_DEV_REGISTRY }}
+          username: ${{ secrets.ROBOTICS_ACRPUSH_DOCKER_APPLICATION_ID }}
+          password: ${{ secrets.ROBOTICS_ACRPUSH_DOCKER_SECRET }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.AURORA_DEV_REGISTRY }}/${{ env.AURORA_DEV_IMAGE_NAME }}-simulator
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile.Simulator
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  build-and-push-simulator-to-auroraprodacr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Aurora Prod Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.AURORA_PROD_REGISTRY }}
+          username: ${{ secrets.ROBOTICS_ACRPUSH_DOCKER_APPLICATION_ID }}
+          password: ${{ secrets.ROBOTICS_ACRPUSH_DOCKER_SECRET }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.AURORA_PROD_REGISTRY }}/${{ env.AURORA_PROD_IMAGE_NAME }}-simulator
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile.Simulator
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  build-and-push-isar-with-turtlebot-to-ghcr:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -64,7 +132,7 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ${{ env.GITHUB_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -72,7 +140,71 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.GITHUB_REGISTRY }}/${{ env.GITHUB_IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile.Isar
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  build-and-push-isar-turtlebot-image-to-auroradevacr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Aurora Dev Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.AURORA_DEV_REGISTRY }}
+          username: ${{ secrets.ROBOTICS_ACRPUSH_DOCKER_APPLICATION_ID }}
+          password: ${{ secrets.ROBOTICS_ACRPUSH_DOCKER_SECRET }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.AURORA_DEV_REGISTRY }}/${{ env.AURORA_DEV_IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile.Isar
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  build-and-push-isar-turtlebot-image-to-auroraprodacr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Aurora Prod Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.AURORA_PROD_REGISTRY }}
+          username: ${{ secrets.ROBOTICS_ACRPUSH_DOCKER_APPLICATION_ID }}
+          password: ${{ secrets.ROBOTICS_ACRPUSH_DOCKER_SECRET }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.AURORA_PROD_REGISTRY }}/${{ env.AURORA_PROD_IMAGE_NAME }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
