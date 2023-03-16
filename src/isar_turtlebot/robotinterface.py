@@ -48,7 +48,7 @@ class Robot(RobotInterface):
             self.turtlebot.set_initial_pose(params.initial_pose)
 
     def get_telemetry_publishers(
-        self, queue: Queue, robot_name: str, isar_id: str
+        self, queue: Queue, isar_id: str, robot_name: str
     ) -> List[Thread]:
         publisher_threads: List[Thread] = []
 

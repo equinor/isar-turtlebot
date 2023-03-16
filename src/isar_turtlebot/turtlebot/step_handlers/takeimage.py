@@ -9,7 +9,6 @@ from alitra import Pose, Position, Transform
 from robot_interface.models.inspection.inspection import (
     Image,
     ImageMetadata,
-    TimeIndexedPose,
 )
 from robot_interface.models.mission import TakeImage
 
@@ -91,8 +90,8 @@ class TakeImageHandler(StepHandler):
         )
         timestamp: datetime = datetime.utcnow()
         image_metadata: ImageMetadata = ImageMetadata(
+            pose=pose,
             start_time=timestamp,
-            time_indexed_pose=TimeIndexedPose(pose=pose, time=timestamp),
             file_type=settings.THERMAL_IMAGE_FILETYPE,
         )
 

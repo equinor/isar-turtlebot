@@ -12,7 +12,6 @@ from alitra import Pose, Position, Transform
 from robot_interface.models.inspection.inspection import (
     ThermalImage,
     ThermalImageMetadata,
-    TimeIndexedPose,
 )
 from robot_interface.models.mission import TakeThermalImage
 
@@ -96,8 +95,8 @@ class TakeThermalImageHandler(StepHandler):
         )
         timestamp: datetime = datetime.utcnow()
         image_metadata: ThermalImageMetadata = ThermalImageMetadata(
+            pose=pose,
             start_time=timestamp,
-            time_indexed_pose=TimeIndexedPose(pose=pose, time=timestamp),
             file_type=settings.THERMAL_IMAGE_FILETYPE,
         )
 
