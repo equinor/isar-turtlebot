@@ -57,7 +57,7 @@ class Robot(RobotInterface):
             telemetry_method=self.turtlebot.get_pose_telemetry,
             topic=f"isar/{isar_id}/pose",
             interval=1,
-            retain=True,
+            retain=False,
         )
         pose_thread: Thread = Thread(
             target=pose_publisher.run,
@@ -72,7 +72,7 @@ class Robot(RobotInterface):
             telemetry_method=self.turtlebot.get_battery_telemetry,
             topic=f"isar/{isar_id}/battery",
             interval=1,
-            retain=True,
+            retain=False,
         )
         battery_thread: Thread = Thread(
             target=battery_publisher.run,
