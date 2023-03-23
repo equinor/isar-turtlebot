@@ -8,6 +8,7 @@ from alitra import MapAlignment, Transform, align_maps
 from robot_interface.models.initialize import InitializeParams
 from robot_interface.models.inspection.inspection import Inspection
 from robot_interface.models.mission import InspectionStep, Step, StepStatus
+from robot_interface.models.mission.mission import Mission
 from robot_interface.models.mission.status import RobotStatus
 from robot_interface.robot_interface import RobotInterface
 from robot_interface.telemetry.mqtt_client import MqttTelemetryPublisher
@@ -33,6 +34,9 @@ class Robot(RobotInterface):
     def initiate_step(self, step: Step) -> bool:
         self.turtlebot.publish_step(step=step)
         return True
+
+    def initiate_mission(self, mission: Mission) -> None:
+        raise NotImplementedError
 
     def step_status(self) -> StepStatus:
         return self.turtlebot.get_step_status()
