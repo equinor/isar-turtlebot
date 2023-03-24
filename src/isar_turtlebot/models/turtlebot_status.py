@@ -1,6 +1,6 @@
 from enum import Enum
 
-from robot_interface.models.mission import StepStatus
+from robot_interface.models.mission.step import StepStatus
 
 
 class Status(str, Enum):

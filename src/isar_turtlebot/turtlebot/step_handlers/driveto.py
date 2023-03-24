@@ -2,7 +2,7 @@ import time
 from typing import Optional
 
 from alitra import Frame, Pose, Transform
-from robot_interface.models.mission import DriveToPose
+from robot_interface.models.mission.step import DriveToPose
 
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge

@@ -15,7 +15,8 @@ from robot_interface.models.exceptions.robot_exceptions import (
     RobotInvalidTelemetryException,
 )
 from robot_interface.models.inspection.inspection import Inspection
-from robot_interface.models.mission import InspectionStep, Step, StepStatus
+from robot_interface.models.mission.status import StepStatus
+from robot_interface.models.mission.step import InspectionStep, Step
 from robot_interface.telemetry.payloads import (
     TelemetryBatteryPayload,
     TelemetryPosePayload,
