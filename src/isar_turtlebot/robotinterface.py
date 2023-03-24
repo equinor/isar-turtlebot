@@ -7,9 +7,9 @@ from typing import List, Sequence
 from alitra import MapAlignment, Transform, align_maps
 from robot_interface.models.initialize import InitializeParams
 from robot_interface.models.inspection.inspection import Inspection
-from robot_interface.models.mission import InspectionStep, Step, StepStatus
 from robot_interface.models.mission.mission import Mission
-from robot_interface.models.mission.status import RobotStatus
+from robot_interface.models.mission.status import RobotStatus, StepStatus
+from robot_interface.models.mission.step import InspectionStep, Step
 from robot_interface.robot_interface import RobotInterface
 from robot_interface.telemetry.mqtt_client import MqttTelemetryPublisher
 

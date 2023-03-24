@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict
 
-from robot_interface.models.mission import Step
+from robot_interface.models.mission.step import Step
 
 from isar_turtlebot.models.turtlebot_status import Status
 
