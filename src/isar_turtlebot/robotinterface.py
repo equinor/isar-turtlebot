@@ -1,4 +1,6 @@
+import logging
 import os
+from logging import Logger
 from pathlib import Path
 from queue import Queue
 from threading import Thread
@@ -8,7 +10,7 @@ from alitra import MapAlignment, Transform, align_maps
 from robot_interface.models.initialize import InitializeParams
 from robot_interface.models.inspection.inspection import Inspection
 from robot_interface.models.mission.mission import Mission
-from robot_interface.models.mission.status import RobotStatus, StepStatus
+from robot_interface.models.mission.status import MissionStatus, RobotStatus, StepStatus
 from robot_interface.models.mission.step import InspectionStep, Step
 from robot_interface.robot_interface import RobotInterface
 from robot_interface.telemetry.mqtt_client import MqttTelemetryPublisher
@@ -30,13 +32,19 @@ class Robot(RobotInterface):
             map_alignment.map_from, map_alignment.map_to, rot_axes="z"
         )
         self.turtlebot: Turtlebot = Turtlebot(bridge=bridge(), transform=transform)
+        self.logger: Logger = logging.getLogger("isar_turtlebot")
+
+    def initiate_mission(self, mission: Mission) -> None:
+        self.logger.error("An invalid interface function was called")
+        raise NotImplementedError
+
+    def mission_status(self) -> MissionStatus:
+        self.logger.error("An invalid interface function was called")
+        raise NotImplementedError
 
     def initiate_step(self, step: Step) -> bool:
         self.turtlebot.publish_step(step=step)
         return True
-
-    def initiate_mission(self, mission: Mission) -> None:
-        raise NotImplementedError
 
     def step_status(self) -> StepStatus:
         return self.turtlebot.get_step_status()
