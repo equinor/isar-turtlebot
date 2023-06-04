@@ -4,6 +4,9 @@ from abc import ABC, abstractmethod
 from logging import Logger
 from typing import Any, Optional
 
+from robot_interface.models.exceptions.robot_exceptions import (
+    RobotRetrieveInspectionException,
+)
 from roslibpy import Message, Ros
 from roslibpy import Topic as RosTopic
 
@@ -123,6 +126,11 @@ class ImageTopic(ImageTopicInterface):
             time.sleep(0.1)
             execution_time: float = time.time() - start_time
             if execution_time > self.get_image_timeout:
-                raise TimeoutError("Unable to read image data from topic")
+                error_description: str = "Timed our while fetching the image"
+                self.logger.error(error_description)
+                raise RobotRetrieveInspectionException(
+                    error_description=error_description
+                )
+
         self.take_image = False
         return self.image

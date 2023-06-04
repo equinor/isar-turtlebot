@@ -2,6 +2,9 @@ import logging
 from abc import ABC
 from logging import Logger
 
+from robot_interface.models.exceptions.robot_exceptions import (
+    RobotCommunicationException,
+)
 from roslibpy import Ros
 
 from isar_turtlebot.ros_bridge.topic import ImageTopic, Topic
@@ -74,18 +77,19 @@ class RosBridge(RosBridgeInterface):
                     self.logger.info(f"Successfully connected to ROS at {host}:{port}.")
                     break
             except Exception as e:
-                msg: str = (
-                    "RosBridge failed to connect to ROS at"
-                    f" {host}:{port} with message: {e}"
+                error_description: str = (
+                    "RosBridge failed to connect to ROS at {host}:{port} with message"
                 )
                 self.logger.warning(
-                    f"{msg} - Attempt {connection_retries - retries}"
+                    f"{error_description} - Attempt {connection_retries - retries}"
                     f" of {connection_retries}"
                 )
 
                 if not retries:
-                    self.logger.error(msg)
-                    raise ConnectionError(msg)
+                    self.logger.exception(error_description)
+                    raise RobotCommunicationException(
+                        error_description=error_description
+                    )
 
         client.run()
 

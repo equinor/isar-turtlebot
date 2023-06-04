@@ -1,11 +1,17 @@
 import base64
+import logging
 import time
 from datetime import datetime
+from logging import Logger
 from pathlib import Path
 from typing import Optional
 from uuid import uuid4
 
 from alitra import Pose, Position, Transform
+from robot_interface.models.exceptions.robot_exceptions import (
+    RobotCommunicationException,
+    RobotInfeasibleStepException,
+)
 from robot_interface.models.inspection.inspection import (
     Image,
     ImageMetadata,
@@ -33,6 +39,8 @@ class TakeImageHandler(StepHandler):
         publishing_timeout: float = settings.PUBLISHING_TIMEOUT,
         inspection_pose_timeout: float = settings.INSPECTION_POSE_TIMEOUT,
     ) -> None:
+        self.logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+
         self.bridge: RosBridge = bridge
         self.transform: Transform = transform
         self.storage_folder: Path = storage_folder
@@ -67,7 +75,9 @@ class TakeImageHandler(StepHandler):
             time.sleep(0.1)
             if (time.time() - start_time) > self.publishing_timeout:
                 self.status = Status.Failure
-                raise TimeoutError("Publishing navigation message timed out.")
+                error_description: str = "Publishing navigation message timed out"
+                self.logger.error(error_description)
+                raise RobotCommunicationException(error_description=error_description)
 
         start_time = time.time()
         while self._move_status() is not Status.Succeeded:
@@ -75,7 +85,9 @@ class TakeImageHandler(StepHandler):
             execution_time: float = time.time() - start_time
             if execution_time > self.inspection_pose_timeout:
                 self.status = Status.Failure
-                raise TimeoutError("Navigation to inspection pose timed out.")
+                error_description = "Navigation to inspection pose timed out"
+                self.logger.error(error_description)
+                raise RobotInfeasibleStepException(error_description=error_description)
 
         self._write_image_bytes()
 
@@ -124,10 +136,10 @@ class TakeImageHandler(StepHandler):
         )
         return move_status
 
-    def _write_image_bytes(self):
+    def _write_image_bytes(self) -> None:
         image_data: str = self.bridge.visual_inspection.get_image()
         image_bytes: bytes = base64.b64decode(image_data)
-        self.filename: Path = Path(
+        self.filename = Path(
             f"{self.storage_folder.as_posix()}/{str(uuid4())}.{self.image_filetype}"
         )
 

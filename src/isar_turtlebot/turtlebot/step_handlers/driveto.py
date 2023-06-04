@@ -1,7 +1,12 @@
+import logging
 import time
+from logging import Logger
 from typing import Optional
 
 from alitra import Frame, Pose, Transform
+from robot_interface.models.exceptions.robot_exceptions import (
+    RobotCommunicationException,
+)
 from robot_interface.models.mission.step import DriveToPose
 
 from isar_turtlebot.models.turtlebot_status import Status
@@ -18,9 +23,13 @@ class DriveToHandler(StepHandler):
         transform: Transform,
         publishing_timeout: float = settings.PUBLISHING_TIMEOUT,
     ) -> None:
+        self.logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+
         self.bridge: RosBridge = bridge
         self.transform: Transform = transform
         self.publishing_timeout: float = publishing_timeout
+
+        self.goal_id: Optional[str] = None
 
     def start(
         self,
@@ -38,7 +47,10 @@ class DriveToHandler(StepHandler):
         while self._goal_id() == goal_id:
             time.sleep(0.1)
             if (time.time() - start_time) > self.publishing_timeout:
-                raise TimeoutError("Publishing navigation message timed out")
+                error_description: str = "Publishing navigation message timed out"
+                self.logger.error(error_description)
+                raise RobotCommunicationException(error_description=error_description)
+
         self.goal_id = self._goal_id()
 
     def _goal_id(self) -> Optional[str]:

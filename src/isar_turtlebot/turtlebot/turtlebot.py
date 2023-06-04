@@ -7,13 +7,11 @@ from typing import Optional, Sequence
 from uuid import UUID
 
 from alitra import Frame, Pose, Transform
-from robot_interface.models.exceptions import (
-    RobotCommunicationException,
-    RobotException,
-)
 from robot_interface.models.exceptions.robot_exceptions import (
-    RobotInvalidTelemetryException,
+    RobotRetrieveInspectionException,
+    RobotTelemetryException,
 )
+
 from robot_interface.models.inspection.inspection import Inspection
 from robot_interface.models.mission.status import StepStatus
 from robot_interface.models.mission.step import InspectionStep, Step
@@ -25,6 +23,7 @@ from robot_interface.utilities.json_service import EnhancedJSONEncoder
 
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge import RosBridge
+from isar_turtlebot.settings import settings
 from isar_turtlebot.turtlebot.step_handlers import (
     DriveToHandler,
     TakeImageHandler,
@@ -41,7 +40,7 @@ class Turtlebot:
     """Step manager for Turtlebot."""
 
     def __init__(self, bridge: RosBridge, transform: Transform) -> None:
-        self.logger: Logger = logging.getLogger("robot")
+        self.logger: Logger = logging.getLogger(settings.LOGGER_NAME)
         self.bridge: RosBridge = bridge
         self.transform: Transform = transform
         self.status: Optional[Status] = None
@@ -64,10 +63,7 @@ class Turtlebot:
 
     def publish_step(self, step: Step) -> None:
         self.step_handler = self.step_handlers[type(step).__name__]
-        try:
-            self.step_handler.start(step)
-        except TimeoutError as e:
-            raise RobotCommunicationException from e
+        self.step_handler.start(step)
 
         if isinstance(step, InspectionStep):
             self.filenames[step.id] = self.step_handler.get_filename()
@@ -78,17 +74,23 @@ class Turtlebot:
             status: Status = self.step_handler.get_status()
             return Status.map_to_step_status(status=status)
 
-    def get_inspections(self, id: UUID) -> Sequence[Inspection]:
+    def get_inspections(self, step_id: UUID) -> Sequence[Inspection]:
         try:
-            inspection: Inspection = self.inspections[id]
-        except KeyError as e:
-            self.logger.warning(f"No inspection connected to step: {id}!")
-            raise RobotException from e
+            inspection: Inspection = self.inspections[step_id]
+        except KeyError:
+            error_description: str = f"Failed to collect inspection for step {step_id}"
+            self.logger.exception(error_description)
+            raise RobotRetrieveInspectionException(error_description=error_description)
+
         try:
-            inspection.data = self._read_data(id)
-        except FileNotFoundError as e:
-            self.logger.warning(f"No data file connected to step: {id}!")
-            raise RobotException from e
+            inspection.data = self._read_data(step_id)
+        except FileNotFoundError:
+            error_description = (
+                f"Failed to read inspection for step {step_id} from file"
+            )
+            self.logger.exception(error_description)
+            raise RobotRetrieveInspectionException(error_description=error_description)
+
         return [inspection]
 
     def _read_data(self, inspection_id: UUID) -> bytes:
@@ -103,7 +105,8 @@ class Turtlebot:
     def get_pose_telemetry(self, robot_name: str, isar_id: str) -> str:
         pose_turtlebot: dict = self.bridge.pose.get_value()
         if not pose_turtlebot:
-            raise RobotInvalidTelemetryException
+            error_description: str = "Retrieving pose returned a null value"
+            raise RobotTelemetryException(error_description=error_description)
 
         robot_pose: Pose = decode_pose_message(pose_message=pose_turtlebot)
         pose: Pose = self.transform.transform_pose(
