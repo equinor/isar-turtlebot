@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     INSPECTION_POSE_TIMEOUT: int = Field(default=60)
     GET_IMAGE_TIMEOUT: int = Field(default=5)
 
+    LOGGER_NAME: str = Field(default="isar_turtlebot")
+
     class Config:
         env_prefix = "ISAR_TURTLEBOT_"
 
