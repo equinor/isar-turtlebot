@@ -8,8 +8,8 @@ from pathlib import Path
 from typing import Optional
 from uuid import uuid4
 
-import PIL.Image as PILImage
 import numpy as np
+import PIL.Image as PILImage
 from alitra import Pose, Position, Transform
 from robot_interface.models.exceptions.robot_exceptions import (
     RobotCommunicationException,
@@ -21,9 +21,9 @@ from robot_interface.models.inspection.inspection import (
 )
 from robot_interface.models.mission.step import TakeThermalImage
 
+from isar_turtlebot.config import settings
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
-from isar_turtlebot.settings import settings
 from isar_turtlebot.turtlebot.step_handlers.stephandler import StepHandler
 from isar_turtlebot.utilities.inspection_pose import get_inspection_pose
 from isar_turtlebot.utilities.pose_message import (

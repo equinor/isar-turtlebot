@@ -11,7 +11,6 @@ from robot_interface.models.exceptions.robot_exceptions import (
     RobotRetrieveInspectionException,
     RobotTelemetryException,
 )
-
 from robot_interface.models.inspection.inspection import Inspection
 from robot_interface.models.mission.status import StepStatus
 from robot_interface.models.mission.step import InspectionStep, Step
@@ -21,9 +20,9 @@ from robot_interface.telemetry.payloads import (
 )
 from robot_interface.utilities.json_service import EnhancedJSONEncoder
 
+from isar_turtlebot.config import settings
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge import RosBridge
-from isar_turtlebot.settings import settings
 from isar_turtlebot.turtlebot.step_handlers import (
     DriveToHandler,
     TakeImageHandler,

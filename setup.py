@@ -13,9 +13,9 @@ setup(
     package_dir={"": "src"},
     package_data={
         "isar_turtlebot": [
-            "settings/maps/turtleworld.json",
-            "settings/maps/klab_turtlebot_old.json",
-            "settings/maps/klab_turtlebot.json",
+            "config/maps/turtleworld.json",
+            "config/maps/klab_turtlebot_old.json",
+            "config/maps/klab_turtlebot.json",
             "config/settings.env",
         ]
     },

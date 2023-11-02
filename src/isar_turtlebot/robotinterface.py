@@ -15,8 +15,8 @@ from robot_interface.models.mission.step import InspectionStep, Step
 from robot_interface.robot_interface import RobotInterface
 from robot_interface.telemetry.mqtt_client import MqttTelemetryPublisher
 
+from isar_turtlebot.config import settings
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge, RosBridgeInterface
-from isar_turtlebot.settings import settings
 from isar_turtlebot.turtlebot import Turtlebot
 
 
@@ -25,7 +25,7 @@ class Robot(RobotInterface):
         map_alignment: MapAlignment = MapAlignment.from_config(
             Path(
                 os.path.dirname(os.path.realpath(__file__)),
-                f"settings/maps/{settings.TURTLEBOT_MAP}.json",
+                f"config/maps/{settings.TURTLEBOT_MAP}.json",
             )
         )
         transform: Transform = align_maps(
