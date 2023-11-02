@@ -7,8 +7,8 @@ from robot_interface.models.exceptions.robot_exceptions import (
 )
 from roslibpy import Ros
 
+from isar_turtlebot.config import settings
 from isar_turtlebot.ros_bridge.topic import ImageTopic, Topic
-from isar_turtlebot.settings import settings
 
 
 class RosBridgeInterface(ABC):

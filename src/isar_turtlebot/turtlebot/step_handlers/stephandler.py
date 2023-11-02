@@ -5,8 +5,8 @@ from typing import Dict
 from robot_interface.models.exceptions.robot_exceptions import RobotAPIException
 from robot_interface.models.mission.step import Step
 
+from isar_turtlebot.config import settings
 from isar_turtlebot.models.turtlebot_status import Status
-from isar_turtlebot.settings import settings
 
 
 class StepHandler(ABC):

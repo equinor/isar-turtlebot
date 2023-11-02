@@ -9,9 +9,9 @@ from robot_interface.models.exceptions.robot_exceptions import (
 )
 from robot_interface.models.mission.step import DriveToPose
 
+from isar_turtlebot.config import settings
 from isar_turtlebot.models.turtlebot_status import Status
 from isar_turtlebot.ros_bridge.ros_bridge import RosBridge
-from isar_turtlebot.settings import settings
 from isar_turtlebot.turtlebot.step_handlers.stephandler import StepHandler
 from isar_turtlebot.utilities.pose_message import encode_pose_message
 

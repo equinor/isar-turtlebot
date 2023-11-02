@@ -10,7 +10,7 @@ from robot_interface.models.exceptions.robot_exceptions import (
 from roslibpy import Message, Ros
 from roslibpy import Topic as RosTopic
 
-from isar_turtlebot.settings import settings
+from isar_turtlebot.config import settings
 
 
 class TopicInterface(ABC):
