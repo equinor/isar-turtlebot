@@ -3,11 +3,10 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - "**.md"
   pull_request:
-    paths-ignore:
-      - "**.md"
+    branches:
+      - main
+
 jobs:
   run:
     name: Run
