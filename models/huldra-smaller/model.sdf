@@ -1,0 +1,18 @@
+<?xml version='1.0'?>
+<sdf version='1.4'>
+    <model name='huldra-smaller'>
+    <pose>119 307 -29.450 1.571 0 0</pose>
+        <static>true</static>
+        <link name='link0'>
+            <visual name="visual0">
+                <pose>0 0 0 0 0 0</pose>
+                <geometry>
+                    <mesh>
+                        <uri>file://huldra-smaller/meshes/huldra-smaller.obj</uri>
+                    </mesh>
+                </geometry>
+                <cast_shadows>0</cast_shadows>
+            </visual>
+        </link>
+    </model>
+</sdf>
