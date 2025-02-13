@@ -4,10 +4,10 @@ from robot_interface.models.mission.step import StepStatus
 
 
 class Status(str, Enum):
-    Active: str = "active"
-    Failure: str = "failure"
-    Succeeded: str = "success"
-    Unexpected: str = "unexpected"
+    Active = "active"
+    Failure = "failure"
+    Succeeded = "success"
+    Unexpected = "unexpected"
 
     @classmethod
     def map_to_step_status(cls, status: "Status") -> StepStatus:
