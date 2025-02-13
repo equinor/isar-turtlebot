@@ -1,5 +1,7 @@
 # isar-turtlebot
 
+**Repo not maintained, does not run with latest version of ISAR**
+
 ISAR implementation for the Turtlebot3 Waffle Pi.
 
 [ISAR](https://github.com/equinor/isar) - Integration and Supervisory control of Autonomous Robots - is a tool for integrating robot applications into Equinor systems. Through the ISAR API you can send command to a robot to do missions and collect results from the missions.
@@ -99,7 +101,6 @@ Then run the following:
 ./path-to-repo/az_scripts/download_sim_models.sh
 ```
 
-
 ### Running custom model
 
 To run the simulation with the custom model set the WORLD_NAME as an environment variable in a .env file or argument like this:
@@ -107,6 +108,7 @@ To run the simulation with the custom model set the WORLD_NAME as an environment
 ```bash
 WORLD_NAME=your_custom_model docker compose up --build
 ```
+
 ## Simulation without docker
 
 ### Simulator installation
