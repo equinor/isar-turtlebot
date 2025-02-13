@@ -10,7 +10,6 @@ from isar_turtlebot.models.turtlebot_status import Status
 
 
 class StepHandler(ABC):
-
     """Baseclass for step handlers"""
 
     @abstractmethod
