@@ -1,23 +1,19 @@
-version: "2.3"
 services:
-  noetic:
+  simulator:
     image: turtle_sim:latest
     container_name: turtle_sim
+    platform: linux/amd64
     build:
       context: ./
       dockerfile: Dockerfile.Simulator
-    ports:
-      - "9090:9090"
-      - "5000:5000"
-    environment:
-      - TELEOP_CONTROLLER=${TELEOP_CONTROLLER:-disabled}
-      - ENABLE_MANIPULATOR=${ENABLE_MANIPULATOR:-false}
-      - MANIPULATOR_GUI=${MANIPULATOR_GUI:-disabled}
-      - HEADLESS=${HEADLESS:-true}
-      - WORLD_NAME=${WORLD_NAME:-house}
     tty: true
     networks:
       - turtlenet
+    environment:
+      - DISPLAY=${DISPLAY}  # for gazebo gui
+    privileged: true  # for gazebo gui
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro  # for gazebo gui
 networks:
   turtlenet:
     name: turtlenet
