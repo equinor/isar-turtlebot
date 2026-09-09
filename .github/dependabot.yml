@@ -1,0 +1,49 @@
+version: 2
+updates:
+  # Dependencies are declared in setup.py; setup.cfg contains tool settings.
+  # Unpinned requirements without a lockfile may not produce version-update PRs.
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      python-patch-minor:
+        patterns:
+          - "*"
+        update-types:
+          - patch
+          - minor
+      python-major:
+        patterns:
+          - "*"
+        update-types:
+          - major
+
+  # Covers Dockerfile.Isar and Dockerfile.Simulator.
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      docker:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: python
+        update-types:
+          - version-update:semver-major
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"
